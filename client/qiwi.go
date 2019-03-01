@@ -65,7 +65,7 @@ func New(token string, opts ...Opt) *Client {
 		baseURL:     BaseURL,
 		openBaseURL: OpenBaseURL,
 		httpClient:  http.DefaultClient,
-		debug:       false,
+		Debug:       false,
 	}
 
 	c.Payments = NewPayments(c)
@@ -93,7 +93,7 @@ type Client struct {
 	Balance  *Balance
 	Cards    *Cards
 
-	debug bool
+	Debug bool
 }
 
 func (c *Client) makeRequest(endpoint string, res interface{}, params ...url.Values) (err error) {
@@ -142,7 +142,7 @@ func (c *Client) req(method, endpoint string, res interface{}, params ...interfa
 		} else {
 			switch v := params[0].(type) {
 			case url.Values:
-				if c.debug {
+				if c.Debug {
 					color.Cyan("body: %v", v.Encode())
 				}
 				body = strings.NewReader(v.Encode())
@@ -153,7 +153,7 @@ func (c *Client) req(method, endpoint string, res interface{}, params ...interfa
 				if err != nil {
 					return
 				}
-				if c.debug {
+				if c.Debug {
 					color.Cyan("body: %s", bts)
 				}
 				body = bytes.NewReader(bts)
@@ -162,7 +162,7 @@ func (c *Client) req(method, endpoint string, res interface{}, params ...interfa
 		}
 	}
 
-	if c.debug {
+	if c.Debug {
 		color.Green("Request %s", uri)
 	}
 
@@ -184,7 +184,7 @@ func (c *Client) req(method, endpoint string, res interface{}, params ...interfa
 			}
 		}
 	}
-	if c.debug {
+	if c.Debug {
 		color.Cyan("token %s", c.token)
 		color.Cyan("%v", req.Header)
 	}

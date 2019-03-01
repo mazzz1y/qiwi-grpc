@@ -8,7 +8,7 @@ import (
 )
 
 func (q *Client) decodeResponse(body io.ReadCloser, res interface{}) (err error) {
-	if q.debug {
+	if q.Debug {
 		bts, err := ioutil.ReadAll(body)
 		if err != nil {
 			return err

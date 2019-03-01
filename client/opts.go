@@ -20,5 +20,5 @@ func Wallet(wallet string) func(c *Client) {
 
 // Debug enable debug
 func Debug(c *Client) {
-	c.debug = true
+	c.Debug = true
 }

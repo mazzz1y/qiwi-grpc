@@ -68,7 +68,7 @@ type PaymentRequest struct {
 	Comment string `json:"comment,omitempty"`
 }
 
-// PaymentResponse foemat of payment response
+// PaymentResponse format of payment response
 type PaymentResponse struct {
 	ID     string `json:"id"`
 	Terms  string `json:"terms"`

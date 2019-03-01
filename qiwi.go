@@ -13,6 +13,9 @@ import (
 	"qiwi/client"
 )
 
+// per-account payment method code
+const paymentMethod = 99
+
 var (
 	collection = DB.Collection("accounts")
 	currencies = map[int]string{
@@ -38,7 +41,7 @@ func (a Account) Create() (Account, error) {
 	if err != nil {
 		return a, status.Errorf(codes.InvalidArgument, err.Error())
 	}
-	if profile.ContractInfo.Blocked != false {
+	if profile.ContractInfo.Blocked {
 		return a, status.Errorf(codes.PermissionDenied, err.Error())
 	}
 
@@ -117,14 +120,11 @@ func (a Account) Balance() (map[string]float64, error) {
 
 // Send money to a Qiwi Wallet, only RUB
 func (a Account) SendMoneyToQiwi(amount float64, receiverContractID string) (string, error) {
-	// per-account payment method code
-	const paymentMethod = 99
 	c, err := a.client()
 	if status.Code(err) != 0 {
 		return "", err
 	}
 	payment, err := c.Cards.Payment(paymentMethod, amount, receiverContractID)
-	log.Println(payment)
 
 	if payment.Transaction.State.Code != "Accepted" {
 		err := errors.New("transaction declined")
@@ -137,6 +137,9 @@ func (a Account) SendMoneyToQiwi(amount float64, receiverContractID string) (str
 func (a Account) client() (*client.Client, error) {
 	err := collection.FindOne(context.TODO(), bson.M{"contractID": a.ContractID}).Decode(&a)
 	c := client.New(a.Token)
+	if Config.Debug {
+		c.Debug = true
+	}
 	if err != nil {
 		return c, status.Errorf(codes.NotFound, "account not found in db")
 	}

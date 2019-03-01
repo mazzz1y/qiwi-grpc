@@ -8,6 +8,7 @@ import (
 
 type config struct {
 	RPCPort   string `env:"PORT" envDefault:"50051"`
+	Debug     bool `env:"DEBUG" envDefault:"false"`
 	MongoHost string `env:"MONGO_HOST" envDefault:"localhost"`
 	MongoPort string `env:"MONGO_PORT" envDefault:"27017"`
 	MongoDB   string `env:"MONGO_DB" envDefault:"qiwi"`
@@ -20,6 +21,9 @@ func initEnv() config {
 	err := env.Parse(&c)
 	if err != nil {
 		log.Fatal(err)
+	}
+	if c.Debug {
+		log.Println("Debug mode enabled")
 	}
 	return c
 }
