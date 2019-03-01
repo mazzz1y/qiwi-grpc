@@ -8,6 +8,7 @@
 ### Environment variables
 ```bash
 PORT=50051
+DEBUG=false
 MONGO_HOST=localhost
 MONGO_PORT=27017
 MONGO_DB=qiwi
