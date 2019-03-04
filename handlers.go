@@ -12,7 +12,7 @@ func (s *Server) AddAccount(ctx context.Context, in *pb.AddAccountRequest) (*pb.
 	if err != nil {
 		return nil, err
 	}
-	return &pb.AddAccountResponse{ContractID: a.ContractID}, nil
+	return &pb.AddAccountResponse{ContractID: a.ContractID, OperationLimit: a.OperationLimit, MonthLimit: a.MonthLimit}, nil
 }
 
 func (s *Server) ListAccounts(ctx context.Context, in *pb.ListAccountsRequest) (*pb.ListAccountsResponse, error) {

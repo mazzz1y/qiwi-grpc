@@ -29,12 +29,24 @@ var (
 		980: "UAH",
 		643: "RUB",
 	}
+	operationLimit = map[string]int64{
+		"SIMPLE":   15000,
+		"VERIFIED": 60000,
+		"FULL":     600000,
+	}
+	monthLimit = map[string]int64{
+		"SIMPLE": 40000,
+		"VERIFIED": 200000,
+		"FULL": 0,
+	}
 )
 
 type Account struct {
 	Token      string             `bson:"token"`
 	ContractID string              `bson:"contractID"`
-	Type	   string			  `bson:"type"` //FULL,VERIFIED,SIMPLE
+	OperationLimit	   int64			  `bson:"operationLimit"`
+	MonthLimit	   int64			  `bson:"monthLimit"`
+	Blocked    bool `bson:"blocked"`
 }
 
 // Create or update account with a new token
@@ -49,7 +61,8 @@ func (a Account) Create() (Account, error) {
 	}
 
 	a.ContractID = strconv.FormatInt(profile.AuthInfo.PersonID, 10)
-	a.Type = getQiwiIdentificationLevel(profile)
+	a.OperationLimit = operationLimit[getQiwiIdentificationLevel(profile)]
+	a.MonthLimit = monthLimit[getQiwiIdentificationLevel(profile)]
 
 	// update account if already exist
 	count, err := collection.CountDocuments(context.TODO(), bson.M{"contractID": a.ContractID})
