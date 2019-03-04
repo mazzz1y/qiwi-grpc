@@ -49,6 +49,7 @@ const (
 	EndpointComission = "sinap/providers/%d/form"
 	// EndpointSpecialComission comission for specific amount
 	EndpointSpecialComission = "sinap/providers/%d/onlineCommission"
+
 )
 
 var (

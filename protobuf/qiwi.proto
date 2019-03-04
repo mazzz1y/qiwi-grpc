@@ -20,25 +20,25 @@ message AddAccountRequest {
 }
 
 message AddAccountResponse {
-  int64 contractID = 1;
+  string contractID = 1;
 }
 
 message ListAccountsRequest {}
 
 message ListAccountsResponse {
-  repeated int64 contractIDs = 1;
+  repeated string contractIDs = 1;
 }
 
 message GetAccountBalancesRequest {
-  int64 contractID = 1;
+  string contractID = 1;
 }
 message GetAccountBalancesResponse {
   map<string, double> balances = 1;
 }
 
 message SendMoneyToQiwiRequest {
-  int64 senderContractID = 1;
-  string receiverContractID = 2;
+  string senderContractID = 1;
+  string receiverContractID = 2; //todo
   string currency = 3;
   double amount = 4;
 }
