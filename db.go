@@ -2,14 +2,17 @@ package main
 
 import (
 	"context"
-	"log"
-	"time"
-
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"log"
+	"time"
 )
 
-var DB = initDB()
+var (
+	DB = initDB()
+
+)
 
 func initDB() *mongo.Database {
 	uri := "mongodb://" + Config.MongoHost + ":" + Config.MongoPort
@@ -17,12 +20,14 @@ func initDB() *mongo.Database {
 	if err != nil {
 		log.Fatal(err)
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+	ctx, _ := context.WithTimeout(context.Background(), 2*time.Second)
 	err = client.Connect(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("MongoDB Connected: " + uri)
+	if client.Ping(ctx, readpref.Primary()) != nil {
+		log.Fatal("MongoDB: connect failed")
+	}
+	log.Println("MongoDB: connected: " + uri)
 	return client.Database(Config.MongoDB)
 }

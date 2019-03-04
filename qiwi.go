@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/x/bsonx"
@@ -30,8 +31,9 @@ var (
 )
 
 type Account struct {
-	Token      string `bson:"token"`
-	ContractID int64  `bson:"contractID"`
+	ID         primitive.ObjectID `bson:"_id"`
+	Token      string             `bson:"token"`
+	ContractID int64              `bson:"contractID"`
 }
 
 // Create or update account with a new token
@@ -62,25 +64,12 @@ func (a Account) Create() (Account, error) {
 		return a, status.Errorf(codes.Internal, err.Error())
 	}
 
-	// create unique index if number of accounts = 1
-	allDocCount, err := collection.CountDocuments(context.TODO(), bson.D{})
+	err = setUniqueIndex("contractID", collection)
 	if err != nil {
 		return a, status.Errorf(codes.Internal, err.Error())
 	}
-	if allDocCount == 1 {
-		_, err = collection.Indexes().CreateOne(
-			context.Background(),
-			mongo.IndexModel{
-				Keys:    bsonx.Doc{{"contractID", bsonx.Int32(1)}},
-				Options: options.Index().SetUnique(true),
-			},
-		)
 
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-	return a, status.Errorf(codes.Internal, err.Error())
+	return a, nil
 }
 
 // Return contractID for stored accounts
@@ -144,4 +133,26 @@ func (a Account) client() (*client.Client, error) {
 		return c, status.Errorf(codes.NotFound, "account not found in db")
 	}
 	return c, nil
+}
+
+// create unique index if number of rows = 1
+func setUniqueIndex(rowName string, collection *mongo.Collection) error {
+	allDocCount, err := collection.CountDocuments(context.TODO(), bson.D{})
+	if err != nil {
+		return err
+	}
+	if allDocCount == 1 {
+		_, err = collection.Indexes().CreateOne(
+			context.TODO(),
+			mongo.IndexModel{
+				Keys:    bsonx.Doc{{rowName, bsonx.Int32(1)}},
+				Options: options.Index().SetUnique(true),
+			},
+		)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
