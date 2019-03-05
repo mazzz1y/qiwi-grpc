@@ -163,17 +163,17 @@ func (a Account) CheckAvailableLimits(amount int64) (bool, error) {
 	if amount > a.OperationLimit {
 		return false, nil
 	}
-	var paySum float64
-	payHist, err := a.getPaymentsHistory(days)
+	var paymentSum float64
+	paymentHist, err := a.getPaymentsHistory(days)
 	if err != nil {
 		return false, err
 	}
-	for _, pay := range payHist {
-		if pay.Sum.Currency == currency {
-			paySum+=pay.Sum.Amount
+	for _, payment := range paymentHist {
+		if payment.Sum.Currency == currency {
+			paymentSum+=payment.Sum.Amount
 		}
 	}
-	if int64(paySum) > a.MonthLimit || int64(paySum) > a.OperationLimit {
+	if int64(paymentSum) > a.MonthLimit {
 		return false, nil
 	}
 	return true, nil
