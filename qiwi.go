@@ -38,7 +38,7 @@ var (
 	monthLimit = map[string]int64{
 		"SIMPLE": 40000,
 		"VERIFIED": 200000,
-		"FULL": 0,
+		"FULL": 999999999, // hardcoded unlimited
 	}
 )
 
@@ -156,7 +156,30 @@ func (a Account) GetPaymentLink(amount int, comment string) string {
 	return baseURL
 }
 
-func (a Account) GetPaymentsHistory(days int) ([]client.Txn, error) {
+func (a Account) CheckAvailableLimits(amount int64) (bool, error) {
+	const days = 31
+	const currency = 643
+
+	if amount > a.OperationLimit {
+		return false, nil
+	}
+	var paySum float64
+	payHist, err := a.getPaymentsHistory(days)
+	if err != nil {
+		return false, err
+	}
+	for _, pay := range payHist {
+		if pay.Sum.Currency == currency {
+			paySum+=pay.Sum.Amount
+		}
+	}
+	if int64(paySum) > a.MonthLimit || int64(paySum) > a.OperationLimit {
+		return false, nil
+	}
+	return true, nil
+}
+
+func (a Account) getPaymentsHistory(days int) ([]client.Txn, error) {
 	const rows = 50
 	c, err := a.client()
 	if status.Code(err) != 0 {
