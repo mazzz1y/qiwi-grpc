@@ -13,6 +13,7 @@ import (
 	"net/url"
 	"qiwi/client"
 	"strconv"
+	"time"
 )
 
 // per-account payment method code
@@ -155,10 +156,27 @@ func (a Account) GetPaymentLink(amount int, comment string) string {
 	return baseURL
 }
 
+func (a Account) GetPaymentsHistory(days int) ([]client.Txn, error) {
+	const rows = 50
+	c, err := a.client()
+	if status.Code(err) != 0 {
+		return nil, err
+	}
+	v := url.Values{}
+	v.Set("startDate", time.Now().AddDate(0,0,-days).Format(time.RFC3339))
+	v.Set("endDate", time.Now().Format(time.RFC3339))
+	pr, err := c.Payments.History(rows, v)
+	if err != nil {
+		return pr.Data, status.Errorf(codes.Internal, "getting history error")
+	}
+	return pr.Data, nil
+}
+
 // Return qiwi-client if account exist in db
 func (a Account) client() (*client.Client, error) {
 	err := collection.FindOne(context.TODO(), bson.M{"contractID": a.ContractID}).Decode(&a)
 	c := client.New(a.Token)
+	c.SetWallet(a.ContractID)
 	if Config.Debug {
 		c.Debug = true
 	}

@@ -34,7 +34,7 @@ const (
 	// EndpointIdent identification endpoint
 	EndpointIdent = "identification/v1/persons/%s/identification" // %s - wallet
 	// EndpointPaymentsHistory get history
-	EndpointPaymentsHistory = "payment-history/v1/persons/%s/payments" // %s - wallet
+	EndpointPaymentsHistory = "payment-history/v2/persons/%s/payments" // %s - wallet
 	// EndpointStat get stat of payments
 	EndpointStat = "payment-history/v1/persons/%s/payments/total" // %s - wallet
 	// EndpointTxnInfo get info anout single txn
