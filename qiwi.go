@@ -138,6 +138,7 @@ func (a Account) SendMoneyToQiwi(amount float64, receiverContractID string) (str
 	return payment.Transaction.State.Code, nil
 }
 
+// Get user-friendly payment link
 func (a Account) GetPaymentLink(amount int, comment string) string {
 	const amountFraction = 0
 	const paymentFormURL = "https://qiwi.com/payment/form/"
@@ -156,7 +157,8 @@ func (a Account) GetPaymentLink(amount int, comment string) string {
 	return baseURL
 }
 
-func (a Account) CheckAvailableLimits(amount int64) (bool, error) {
+// Check that account has enough limits for making payment
+func (a Account) IsReadyForPayment(amount int64) (bool, error) {
 	const days = 31
 	const currency = 643
 
