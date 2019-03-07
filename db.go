@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/x/bsonx"
 	"log"
 	"time"
 
@@ -13,6 +15,29 @@ import (
 var (
 	DB = initDB()
 )
+
+// Create unique index if number of rows = 1
+func SetUniqueIndex(collection *mongo.Collection, rowName string) error {
+	allDocCount, err := collection.CountDocuments(context.TODO(), bson.D{})
+	if err != nil {
+		return err
+	}
+	if allDocCount == 1 {
+		_, err = collection.Indexes().CreateOne(
+			context.TODO(),
+			mongo.IndexModel{
+				Keys:    bsonx.Doc{{rowName, bsonx.Int32(1)}},
+				Options: options.Index().SetUnique(true),
+			},
+		)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 
 func initDB() *mongo.Database {
 	uri := "mongodb://" + Config.MongoHost + ":" + Config.MongoPort

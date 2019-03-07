@@ -29,6 +29,7 @@ type BalanceResponse struct {
 	Accounts []struct {
 		Alias   string `json:"alias"`
 		FsAlias string `json:"fsAlias"`
+		BankAlias string `json:"bankAlias"`
 		Title   string `json:"title"`
 		Type    struct {
 			ID    string `json:"id"`

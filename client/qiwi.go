@@ -22,6 +22,7 @@ const (
 	// OpenBaseURL open base url
 	OpenBaseURL = "https://qiwi.com"
 	// VersionAPI current qiwi.com api version
+	// todo some methods using APIv2
 	VersionAPI = "v1"
 
 	// CurrencyRUB rub id
@@ -40,7 +41,7 @@ const (
 	// EndpointTxnInfo get info anout single txn
 	EndpointTxnInfo = "payment-history/v1/transactions/%s" // %s - txn_id
 	// EndpointBalance get wallet balance
-	EndpointBalance = "funding-sources/v1/accounts/current"
+	EndpointBalance = "funding-sources/v2/persons/%s/accounts" // %s - wallet
 	// EndpointCardsDetect detect code of PS
 	EndpointCardsDetect = "card/detect.action"
 	// EndpointCardsPayment send money from wallet
@@ -115,6 +116,7 @@ func (c *Client) req(method, endpoint string, res interface{}, params ...interfa
 		needWalletID = []string{
 			EndpointPaymentsHistory,
 			EndpointStat,
+			EndpointBalance,
 		}
 		isOpenMethod = OpenMethods[endpoint]
 		baseURL      = c.baseURL

@@ -3,6 +3,7 @@ package main
 import "C"
 import (
 	"context"
+	"google.golang.org/grpc/status"
 	pb "qiwi/protobuf"
 )
 
@@ -12,19 +13,23 @@ func (s *Server) AddAccount(ctx context.Context, in *pb.AddAccountRequest) (*pb.
 	if err != nil {
 		return nil, err
 	}
+	err = a.refreshBalance()
+	if status.Code(err) != 0 {
+		return nil, err
+	}
 	return &pb.AddAccountResponse{ContractID: a.ContractID, OperationLimit: a.OperationLimit, MonthLimit: a.MonthLimit}, nil
 }
 
 func (s *Server) ListAccounts(ctx context.Context, in *pb.ListAccountsRequest) (*pb.ListAccountsResponse, error) {
-	return &pb.ListAccountsResponse{ContractIDs: Account{}.List()}, nil
+	return &pb.ListAccountsResponse{ContractIDs: Account{}.ListString()}, nil
 }
 
 func (s *Server) GetAccountBalances(ctx context.Context, in *pb.GetAccountBalancesRequest) (*pb.GetAccountBalancesResponse, error) {
-	b, err := Account{ContractID: in.ContractID}.Balance()
+	b, err := Account{ContractID: in.ContractID}.GetBalance()
 	if err != nil {
 		return nil, err
 	}
-	return &pb.GetAccountBalancesResponse{Balances: b}, nil
+	return &pb.GetAccountBalancesResponse{Balance: b}, nil
 }
 
 func (s *Server) SendMoneyToQiwi(ctx context.Context, in *pb.SendMoneyToQiwiRequest) (*pb.SendMoneyToQiwiResponse, error) {
@@ -32,6 +37,11 @@ func (s *Server) SendMoneyToQiwi(ctx context.Context, in *pb.SendMoneyToQiwiRequ
 	if err != nil {
 		return nil, err
 	}
-
 	return &pb.SendMoneyToQiwiResponse{Status: statusCode}, nil
+}
+
+func (s *Server) GetPaymentLinks(ctx context.Context, in *pb.GetPaymentLinksRequest) (*pb.GetPaymentLinksResponse, error) {
+	pl := GetPaymentLinks(in.Amount, "")
+
+	return &pb.GetPaymentLinksResponse{PaymentLinks: pl}, nil
 }

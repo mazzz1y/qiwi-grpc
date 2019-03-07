@@ -12,6 +12,7 @@ service Qiwi {
   rpc ListAccounts (ListAccountsRequest) returns (ListAccountsResponse) {}
   rpc GetAccountBalances (GetAccountBalancesRequest) returns (GetAccountBalancesResponse) {}
   rpc SendMoneyToQiwi (SendMoneyToQiwiRequest) returns (SendMoneyToQiwiResponse) {}
+  rpc GetPaymentLinks (GetPaymentLinksRequest) returns (GetPaymentLinksResponse) {}
 }
 
 
@@ -35,15 +36,22 @@ message GetAccountBalancesRequest {
   string contractID = 1;
 }
 message GetAccountBalancesResponse {
-  map<string, double> balances = 1;
+  int64 balance = 1;
 }
 
 message SendMoneyToQiwiRequest {
   string senderContractID = 1;
   string receiverContractID = 2;
   string currency = 3;
-  double amount = 4;
+  int64 amount = 4;
 }
 message SendMoneyToQiwiResponse {
   string status = 1;
+}
+
+message GetPaymentLinksRequest {
+  int64 amount = 1;
+}
+message GetPaymentLinksResponse {
+  repeated string paymentLinks = 1;
 }

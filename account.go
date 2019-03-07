@@ -4,9 +4,6 @@ import (
 	"context"
 	"errors"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/x/bsonx"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"log"
@@ -18,18 +15,13 @@ import (
 
 // per-account payment method code
 const paymentMethod = 99
+// RUB currency
+const currency = 643
+// Qiwi reserved RUB wallet name
+const walletName = "qw_wallet_rub"
 
 var (
-	collection = DB.Collection("accounts")
-	currencies = map[int]string{
-		978: "EUR",
-		398: "KZT",
-		756: "CHF",
-		972: "TJS",
-		840: "USD",
-		980: "UAH",
-		643: "RUB",
-	}
+	accCollection = DB.Collection("accounts")
 	operationLimit = map[string]int64{
 		"SIMPLE":   15000,
 		"VERIFIED": 60000,
@@ -47,6 +39,7 @@ type Account struct {
 	ContractID string              `bson:"contractID"`
 	OperationLimit	   int64			  `bson:"operationLimit"`
 	MonthLimit	   int64			  `bson:"monthLimit"`
+	Balance			int64 `bson:"balance"`
 	Blocked    bool `bson:"blocked"`
 }
 
@@ -66,21 +59,21 @@ func (a Account) Create() (Account, error) {
 	a.MonthLimit = monthLimit[getQiwiIdentificationLevel(profile)]
 
 	// update account if already exist
-	count, err := collection.CountDocuments(context.TODO(), bson.M{"contractID": a.ContractID})
+	count, err := accCollection.CountDocuments(context.TODO(), bson.M{"contractID": a.ContractID})
 	if count > 0 {
-		_, err = collection.ReplaceOne(context.TODO(), bson.M{"contractID": a.ContractID}, &a)
+		_, err = accCollection.ReplaceOne(context.TODO(), bson.M{"contractID": a.ContractID}, &a)
 		if err != nil {
 			return a, status.Errorf(codes.Internal, err.Error())
 		}
 		return a, nil
 	}
 
-	_, err = collection.InsertOne(context.TODO(), a)
+	_, err = accCollection.InsertOne(context.TODO(), a)
 	if err != nil {
 		return a, status.Errorf(codes.Internal, err.Error())
 	}
 
-	err = setUniqueIndex("contractID", collection)
+	err = SetUniqueIndex(accCollection, "contractID")
 	if err != nil {
 		return a, status.Errorf(codes.Internal, err.Error())
 	}
@@ -88,9 +81,9 @@ func (a Account) Create() (Account, error) {
 	return a, nil
 }
 
-// Return contractID for stored accounts
-func (Account) List() (list []string) {
-	cur, err := collection.Find(context.TODO(), bson.M{})
+// Return stored accounts
+func (Account) List() (accounts []Account) {
+	cur, err := accCollection.Find(context.TODO(), bson.M{})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -101,35 +94,59 @@ func (Account) List() (list []string) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		list = append(list, a.ContractID)
+		accounts = append(accounts, a)
 	}
-	return list
+	return accounts
+}
+
+// Return contractID for stored accounts
+func (Account) ListString() (accountsString []string) {
+	accounts := Account{}.List()
+	for _, a := range accounts {
+		accountsString = append(accountsString, a.ContractID)
+	}
+	return accountsString
+}
+
+func (a Account) refreshBalance() error {
+	balance, err := a.GetBalance()
+	log.Println(balance)
+	if err != nil {
+		return status.Errorf(codes.Internal, "failed to get balance from API")
+	}
+	a.Balance = balance
+	_, err = accCollection.ReplaceOne(context.TODO(), bson.M{"contractID": a.ContractID}, &a)
+	if err != nil {
+		return status.Errorf(codes.Internal, "failed to update account in db")
+	}
+	return nil
 }
 
 // Return balance with each currencies for account
-func (a Account) Balance() (map[string]float64, error) {
-	m := map[string]float64{}
+func (a Account) GetBalance() (int64, error) {
 	c, err := a.client()
 	if status.Code(err) != 0 {
-		return m, err
+		return 0, err
 	}
-	b, err := c.Balance.Current()
+	balances, err := c.Balance.Current()
 	if status.Code(err) != 0 {
-		return m, status.Errorf(codes.Internal, err.Error())
+		return 0, status.Errorf(codes.Internal, err.Error())
 	}
-	for _, cur := range b.Accounts {
-		m[currencies[cur.Currency]] = cur.Balance.Amount
+	for _, b := range balances.Accounts {
+		if b.BankAlias == "QIWI" && b.Currency == currency {
+			return int64(b.Balance.Amount), nil
+		}
 	}
-	return m, nil
+	return 0, status.Errorf(codes.Unavailable, "balance unavailable")
 }
 
 // Send money to a Qiwi Wallet, only RUB
-func (a Account) SendMoneyToQiwi(amount float64, receiverContractID string) (string, error) {
+func (a Account) SendMoneyToQiwi(amount int64, receiverContractID string) (string, error) {
 	c, err := a.client()
 	if status.Code(err) != 0 {
 		return "", err
 	}
-	payment, err := c.Cards.Payment(paymentMethod, amount, receiverContractID)
+	payment, err := c.Cards.Payment(paymentMethod, float64(amount), receiverContractID)
 
 	if payment.Transaction.State.Code != "Accepted" {
 		err := errors.New("transaction declined")
@@ -158,9 +175,8 @@ func (a Account) GetPaymentLink(amount int, comment string) string {
 }
 
 // Check that account has enough limits for making payment
-func (a Account) IsReadyForPayment(amount int64) (bool, error) {
+func (a Account) IsReadyForMakePayment(amount int64) (bool, error) {
 	const days = 31
-	const currency = 643
 
 	if amount > a.OperationLimit {
 		return false, nil
@@ -199,7 +215,7 @@ func (a Account) getPaymentsHistory(days int) ([]client.Txn, error) {
 
 // Return qiwi-client if account exist in db
 func (a Account) client() (*client.Client, error) {
-	err := collection.FindOne(context.TODO(), bson.M{"contractID": a.ContractID}).Decode(&a)
+	err := accCollection.FindOne(context.TODO(), bson.M{"contractID": a.ContractID}).Decode(&a)
 	c := client.New(a.Token)
 	c.SetWallet(a.ContractID)
 	if Config.Debug {
@@ -209,28 +225,6 @@ func (a Account) client() (*client.Client, error) {
 		return c, status.Errorf(codes.NotFound, "account not found in db")
 	}
 	return c, nil
-}
-
-// Create unique index if number of rows = 1
-func setUniqueIndex(rowName string, collection *mongo.Collection) error {
-	allDocCount, err := collection.CountDocuments(context.TODO(), bson.D{})
-	if err != nil {
-		return err
-	}
-	if allDocCount == 1 {
-		_, err = collection.Indexes().CreateOne(
-			context.TODO(),
-			mongo.IndexModel{
-				Keys:    bsonx.Doc{{rowName, bsonx.Int32(1)}},
-				Options: options.Index().SetUnique(true),
-			},
-		)
-
-		if err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 // Get identification level for qiwi bank
