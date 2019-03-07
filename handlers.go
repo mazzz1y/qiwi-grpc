@@ -3,21 +3,16 @@ package main
 import "C"
 import (
 	"context"
-	"google.golang.org/grpc/status"
 	pb "qiwi/protobuf"
 )
 
 func (s *Server) AddAccount(ctx context.Context, in *pb.AddAccountRequest) (*pb.AddAccountResponse, error) {
-	a := Account{Token: in.Token}
+	a := Account{Token: in.Token, ContractID: in.ContractID}
 	a, err := a.Create()
 	if err != nil {
 		return nil, err
 	}
-	err = a.refreshBalance()
-	if status.Code(err) != 0 {
-		return nil, err
-	}
-	return &pb.AddAccountResponse{ContractID: a.ContractID, OperationLimit: a.OperationLimit, MonthLimit: a.MonthLimit}, nil
+	return &pb.AddAccountResponse{ContractID: a.ContractID, OperationLimit: a.OperationLimit}, nil
 }
 
 func (s *Server) ListAccounts(ctx context.Context, in *pb.ListAccountsRequest) (*pb.ListAccountsResponse, error) {
@@ -42,6 +37,5 @@ func (s *Server) SendMoneyToQiwi(ctx context.Context, in *pb.SendMoneyToQiwiRequ
 
 func (s *Server) GetPaymentLinks(ctx context.Context, in *pb.GetPaymentLinksRequest) (*pb.GetPaymentLinksResponse, error) {
 	pl := GetPaymentLinks(in.Amount, "")
-
 	return &pb.GetPaymentLinksResponse{PaymentLinks: pl}, nil
 }

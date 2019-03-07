@@ -18,6 +18,7 @@ service Qiwi {
 
 message AddAccountRequest {
   string token = 1;
+  string contractID = 2;
 }
 
 message AddAccountResponse {

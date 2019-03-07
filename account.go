@@ -13,51 +13,46 @@ import (
 	"time"
 )
 
-// per-account payment method code
-const paymentMethod = 99
-// RUB currency
-const currency = 643
-// Qiwi reserved RUB wallet name
-const walletName = "qw_wallet_rub"
+const (
+	paymentMethod = 99 // per-account payment method code
+	currency = 643 // RUB currency
+)
 
 var (
-	accCollection = DB.Collection("accounts")
-	operationLimit = map[string]int64{
+	accCollection       = DB.Collection("accounts")
+	maxAllowableBalance = map[string]int64{
 		"SIMPLE":   15000,
 		"VERIFIED": 60000,
 		"FULL":     600000,
 	}
-	monthLimit = map[string]int64{
-		"SIMPLE": 40000,
+	operationLimitPerMonth = map[string]int64{
+		"SIMPLE":   40000,
 		"VERIFIED": 200000,
-		"FULL": 999999999, // hardcoded unlimited
+		"FULL":     999999999, // hardcoded unlimited
+	}
+	operationLimit = map[string]int64{
+		"SIMPLE":   15000,
+		"VERIFIED": 60000,
+		"FULL":     500000,
 	}
 )
 
 type Account struct {
-	Token      string             `bson:"token"`
-	ContractID string              `bson:"contractID"`
-	OperationLimit	   int64			  `bson:"operationLimit"`
-	MonthLimit	   int64			  `bson:"monthLimit"`
-	Balance			int64 `bson:"balance"`
-	Blocked    bool `bson:"blocked"`
+	Token                  string `bson:"token"`
+	ContractID             string `bson:"contractID"`
+	OperationLimit         int64  `bson:"operationLimit"`
+	MaxAllowableBalance    int64  `bson:"maxAllowableBalance"`
+	OperationLimitPerMonth int64  `bson:"operationLimitPerMonth"`
+	Balance                int64  `bson:"balance"`
+	Blocked                bool   `bson:"blocked"`
 }
 
 // Create or update account with a new token
 func (a Account) Create() (Account, error) {
-	c, _ := a.client()
-	profile, err := c.Profile.Current()
-	if err != nil {
-		return a, status.Errorf(codes.InvalidArgument, err.Error())
+	a, err := a.init()
+	if status.Code(err) != 0 {
+		return a, err
 	}
-	if profile.ContractInfo.Blocked {
-		return a, status.Errorf(codes.PermissionDenied, err.Error())
-	}
-
-	a.ContractID = strconv.FormatInt(profile.AuthInfo.PersonID, 10)
-	a.OperationLimit = operationLimit[getQiwiIdentificationLevel(profile)]
-	a.MonthLimit = monthLimit[getQiwiIdentificationLevel(profile)]
-
 	// update account if already exist
 	count, err := accCollection.CountDocuments(context.TODO(), bson.M{"contractID": a.ContractID})
 	if count > 0 {
@@ -108,20 +103,6 @@ func (Account) ListString() (accountsString []string) {
 	return accountsString
 }
 
-func (a Account) refreshBalance() error {
-	balance, err := a.GetBalance()
-	log.Println(balance)
-	if err != nil {
-		return status.Errorf(codes.Internal, "failed to get balance from API")
-	}
-	a.Balance = balance
-	_, err = accCollection.ReplaceOne(context.TODO(), bson.M{"contractID": a.ContractID}, &a)
-	if err != nil {
-		return status.Errorf(codes.Internal, "failed to update account in db")
-	}
-	return nil
-}
-
 // Return balance with each currencies for account
 func (a Account) GetBalance() (int64, error) {
 	c, err := a.client()
@@ -170,11 +151,11 @@ func (a Account) GetPaymentLink(amount int, comment string) string {
 	// block input
 	v.Set("blocked[0]", "account")
 	v.Set("blocked[1]", "comment")
-	baseURL := paymentFormURL + strconv.Itoa(paymentMethod) + "?" +v.Encode()
+	baseURL := paymentFormURL + strconv.Itoa(paymentMethod) + "?" + v.Encode()
 	return baseURL
 }
 
-// Check that account has enough limits for making payment
+// Check that account has enough limits for making out payment
 func (a Account) IsReadyForMakePayment(amount int64) (bool, error) {
 	const days = 31
 
@@ -188,13 +169,41 @@ func (a Account) IsReadyForMakePayment(amount int64) (bool, error) {
 	}
 	for _, payment := range paymentHist {
 		if payment.Sum.Currency == currency {
-			paymentSum+=payment.Sum.Amount
+			paymentSum += payment.Sum.Amount
 		}
 	}
-	if int64(paymentSum) > a.MonthLimit {
+	if int64(paymentSum) > a.OperationLimitPerMonth {
 		return false, nil
 	}
 	return true, nil
+}
+
+func (a Account) init() (Account, error) {
+	c, _ := a.client()
+	profile, err := c.Profile.Current()
+	if err != nil {
+		return a, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+	if profile.ContractInfo.Blocked {
+		return a, status.Errorf(codes.PermissionDenied, err.Error())
+	}
+    log.Println(a)
+	balance, err := a.GetBalance()
+	log.Println(err)
+	if err != nil {
+		return a, status.Errorf(codes.Internal, "failed to get balance from API")
+	}
+
+	identLevel := getQiwiIdentificationLevel(profile)
+
+	a.ContractID = strconv.FormatInt(profile.AuthInfo.PersonID, 10)
+	a.OperationLimit = operationLimit[identLevel]
+	a.MaxAllowableBalance = maxAllowableBalance[identLevel]
+	a.OperationLimitPerMonth = operationLimitPerMonth[identLevel]
+	a.OperationLimit = operationLimit[identLevel]
+	a.Balance = balance
+
+	return a, nil
 }
 
 func (a Account) getPaymentsHistory(days int) ([]client.Txn, error) {
@@ -204,7 +213,7 @@ func (a Account) getPaymentsHistory(days int) ([]client.Txn, error) {
 		return nil, err
 	}
 	v := url.Values{}
-	v.Set("startDate", time.Now().AddDate(0,0,-days).Format(time.RFC3339))
+	v.Set("startDate", time.Now().AddDate(0, 0, -days).Format(time.RFC3339))
 	v.Set("endDate", time.Now().Format(time.RFC3339))
 	pr, err := c.Payments.History(rows, v)
 	if err != nil {
@@ -213,16 +222,13 @@ func (a Account) getPaymentsHistory(days int) ([]client.Txn, error) {
 	return pr.Data, nil
 }
 
-// Return qiwi-client if account exist in db
+// Return qiwi-client
 func (a Account) client() (*client.Client, error) {
-	err := accCollection.FindOne(context.TODO(), bson.M{"contractID": a.ContractID}).Decode(&a)
+	_ = accCollection.FindOne(context.TODO(), bson.M{"contractID": a.ContractID}).Decode(&a)
 	c := client.New(a.Token)
 	c.SetWallet(a.ContractID)
 	if Config.Debug {
 		c.Debug = true
-	}
-	if err != nil {
-		return c, status.Errorf(codes.NotFound, "account not found in db")
 	}
 	return c, nil
 }
