@@ -36,6 +36,9 @@ func (s *Server) SendMoneyToQiwi(ctx context.Context, in *pb.SendMoneyToQiwiRequ
 }
 
 func (s *Server) GetPaymentLinks(ctx context.Context, in *pb.GetPaymentLinksRequest) (*pb.GetPaymentLinksResponse, error) {
-	pl := GetPaymentLinks(in.Amount, "")
+	pl, err := GetPaymentLinks(in.Amount, "")
+	if err != nil {
+		return nil, err
+	}
 	return &pb.GetPaymentLinksResponse{PaymentLinks: pl}, nil
 }
