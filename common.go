@@ -5,25 +5,26 @@ const maxAmountPerWallet = 15000
 
 
 //todo check max wallet balance
-//todo
+//todo implement maxAmountPerWallet
 //todo check if wallet is not blocked for payment
-func GetPaymentLinks(amount int64, comment string) ([]string) {
+func GetPaymentLinks(amount int64, comment string) []string {
 	accounts := Account{}.List()
 	var links []string
 	comment = "321" //todo
 	for _, acc := range accounts {
-		walAvalPay := acc.MaxAllowableBalance - acc.Balance
 		if amount == 0 {
 			break
 		}
-		if walAvalPay > amount {
+		walAvalPay := acc.MaxAllowableBalance - acc.Balance
+		if walAvalPay > maxAmountPerWallet {
+			walAvalPay = maxAmountPerWallet
+		}
+		if walAvalPay >= amount {
 			links = append(links, acc.GetPaymentLink(int(amount), comment))
 			amount-=amount
-			continue
-		} else if (walAvalPay < amount) && (walAvalPay/100*nedeedPercentForPayment < amount) {
+		} else if walAvalPay <= amount {
 			links = append(links, acc.GetPaymentLink(int(walAvalPay), comment))
-			amount-=walAvalPay
-			continue
+			amount -= walAvalPay
 		}
 	}
 
