@@ -11,8 +11,10 @@ service Qiwi {
   rpc AddAccount (AddAccountRequest) returns (AddAccountResponse) {}
   rpc ListAccounts (ListAccountsRequest) returns (ListAccountsResponse) {}
   rpc GetAccountBalances (GetAccountBalancesRequest) returns (GetAccountBalancesResponse) {}
-  rpc SendMoneyToQiwi (SendMoneyToQiwiRequest) returns (SendMoneyToQiwiResponse) {}
+//  rpc SendMoneyToQiwi (SendMoneyToQiwiRequest) returns (SendMoneyToQiwiResponse) {} DEPRECATED
   rpc Deposit (DepositRequest) returns (DepositResponse) {}
+//  rpc Withdrawal (WithdrawalRequest) returns (WithdrawalResponse) {}
+
 }
 
 
@@ -40,21 +42,28 @@ message GetAccountBalancesResponse {
   int64 balance = 1;
 }
 
-message SendMoneyToQiwiRequest {
-  string senderContractID = 1;
-  string receiverContractID = 2;
-  string currency = 3;
-  int64 amount = 4;
-}
-message SendMoneyToQiwiResponse {
-  string status = 1;
-}
+// DEPRECATED
+//message SendMoneyToQiwiRequest {
+//  string senderContractID = 1;
+//  string receiverContractID = 2;
+//  string currency = 3;
+//  int64 amount = 4;
+//}
+//message SendMoneyToQiwiResponse {
+//  string status = 1;g
+//}
 
 message DepositRequest {
   int64 amount = 1;
 }
 message DepositResponse {
-  repeated int64 amount = 1;
-  repeated string comment = 2;
-  repeated string link = 3;
+  string id = 1;
+  repeated int64 amounts = 2;
+  repeated string comments = 3;
+  repeated string contractIDs = 4;
+  repeated string links = 5;
 }
+
+//TODO
+//message WithdrawalRequest {}
+//message WithdrawalResponse {}

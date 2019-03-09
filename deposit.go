@@ -11,12 +11,13 @@ import (
 
 const maxAmountPerWallet = 15000
 
-var depositCollection = DB.Collection("deposit")
+var depositCollection = DB.Collection("deposits")
 
 type DepositTransaction struct {
-	Amount  int64  `bson:"amount"`
-	Comment string `bson:"comment"`
-	Link    string `bson:"link"`
+	Amount     int64  `bson:"amount"`
+	Comment    string `bson:"comment"`
+	ContractID string `bson:"contractID"`
+	Link       string `bson:"link"`
 }
 
 type Deposit struct {
@@ -27,7 +28,7 @@ type Deposit struct {
 }
 
 func (d Deposit) Create() (Deposit, error) {
-	tr, err := getPaymentLinks(d.Amount)
+	tr, err := d.generateTransactions()
 	if err != nil {
 		return d, err
 	}
@@ -43,8 +44,9 @@ func (d Deposit) Create() (Deposit, error) {
 }
 
 //todo check if wallet is not blocked for payment
-func getPaymentLinks(amount int64) ([]DepositTransaction, error) {
+func (d Deposit) generateTransactions() ([]DepositTransaction, error) {
 	accounts := Account{}.List()
+	amount := d.Amount
 	var depositTransactions []DepositTransaction
 
 	if getAvailableDepositSum() < amount {
@@ -63,12 +65,14 @@ func getPaymentLinks(amount int64) ([]DepositTransaction, error) {
 			depositTransactions = append(depositTransactions, DepositTransaction{
 				Amount:  amount,
 				Comment: comment,
+				ContractID: acc.ContractID,
 				Link:    acc.GetPaymentLink(int(amount), comment)})
 			amount -= amount
 		} else if availSumForDeposit <= amount {
 			depositTransactions = append(depositTransactions, DepositTransaction{
 				Amount:  availSumForDeposit,
 				Comment: comment,
+				ContractID: acc.ContractID,
 				Link:    acc.GetPaymentLink(int(availSumForDeposit), comment)})
 			amount -= availSumForDeposit
 		}

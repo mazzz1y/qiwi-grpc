@@ -177,6 +177,7 @@ func (a Account) IsReadyForMakePayment(amount int64) (bool, error) {
 	}
 	return true, nil
 }
+
 //todo implement ability to refresh wallet
 func (a Account) init() (Account, error) {
 	c, _ := a.client()

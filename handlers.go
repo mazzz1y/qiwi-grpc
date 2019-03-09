@@ -27,28 +27,22 @@ func (s *Server) GetAccountBalances(ctx context.Context, in *pb.GetAccountBalanc
 	return &pb.GetAccountBalancesResponse{Balance: b}, nil
 }
 
-func (s *Server) SendMoneyToQiwi(ctx context.Context, in *pb.SendMoneyToQiwiRequest) (*pb.SendMoneyToQiwiResponse, error) {
-	statusCode, err := Account{ContractID: in.SenderContractID}.SendMoneyToQiwi(in.Amount, in.ReceiverContractID)
-	if err != nil {
-		return nil, err
-	}
-	return &pb.SendMoneyToQiwiResponse{Status: statusCode}, nil
-}
-
 func (s *Server) Deposit(ctx context.Context, in *pb.DepositRequest) (*pb.DepositResponse, error) {
 	deposit, err := Deposit{Amount: in.Amount}.Create()
 
 	var amounts []int64
 	var links []string
 	var comments []string
+	var contractIDs []string
 
 	for _, d := range deposit.Transactions {
 		amounts = append(amounts, d.Amount)
 		links = append(links, d.Link)
 		comments = append(comments, d.Comment)
+		contractIDs = append(contractIDs, d.ContractID)
 	}
 	if err != nil {
 		return nil, err
 	}
-	return &pb.DepositResponse{Amount: amounts, Link: links, Comment: comments}, nil
+	return &pb.DepositResponse{Id: deposit.ID.Hex(), ContractIDs: contractIDs, Amounts: amounts, Links: links, Comments: comments}, nil
 }
