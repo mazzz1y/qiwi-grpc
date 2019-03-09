@@ -14,8 +14,8 @@ import (
 )
 
 const (
-	paymentMethod = 99 // per-account payment method code
-	currency = 643 // RUB currency
+	paymentMethod = 99  // per-account payment method code
+	currency      = 643 // RUB currency
 )
 
 var (
@@ -177,7 +177,7 @@ func (a Account) IsReadyForMakePayment(amount int64) (bool, error) {
 	}
 	return true, nil
 }
-
+//todo implement ability to refresh wallet
 func (a Account) init() (Account, error) {
 	c, _ := a.client()
 	profile, err := c.Profile.Current()
@@ -187,7 +187,7 @@ func (a Account) init() (Account, error) {
 	if profile.ContractInfo.Blocked {
 		return a, status.Errorf(codes.PermissionDenied, err.Error())
 	}
-    log.Println(a)
+	log.Println(a)
 	balance, err := a.GetBalance()
 	log.Println(err)
 	if err != nil {

@@ -35,10 +35,20 @@ func (s *Server) SendMoneyToQiwi(ctx context.Context, in *pb.SendMoneyToQiwiRequ
 	return &pb.SendMoneyToQiwiResponse{Status: statusCode}, nil
 }
 
-func (s *Server) GetPaymentLinks(ctx context.Context, in *pb.GetPaymentLinksRequest) (*pb.GetPaymentLinksResponse, error) {
-	pl, err := GetPaymentLinks(in.Amount, "")
+func (s *Server) Deposit(ctx context.Context, in *pb.DepositRequest) (*pb.DepositResponse, error) {
+	deposit, err := Deposit{Amount: in.Amount}.Create()
+
+	var amounts []int64
+	var links []string
+	var comments []string
+
+	for _, d := range deposit.Transactions {
+		amounts = append(amounts, d.Amount)
+		links = append(links, d.Link)
+		comments = append(comments, d.Comment)
+	}
 	if err != nil {
 		return nil, err
 	}
-	return &pb.GetPaymentLinksResponse{PaymentLinks: pl}, nil
+	return &pb.DepositResponse{Amount: amounts, Link: links, Comment: comments}, nil
 }
