@@ -20,6 +20,19 @@ go mod vendor # install dependencies
 go run *.go
 ```
 
+### Protobuf documentation
+
+*Powered by: https://github.com/pseudomuto/protoc-gen-doc*
+
+##### Generate
+
+```bash
+docker run --rm \
+  -v $(pwd)/protobuf:/out \
+  -v $(pwd)/protobuf:/protos \
+  pseudomuto/protoc-gen-doc --doc_opt=markdown,readme.md
+```
+
 ### Protobuf code generation
 
 ##### Requirements

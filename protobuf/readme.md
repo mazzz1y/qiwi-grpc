@@ -6,13 +6,14 @@
 - [qiwi.proto](#qiwi.proto)
     - [AddAccountRequest](#protobuf.AddAccountRequest)
     - [AddAccountResponse](#protobuf.AddAccountResponse)
+    - [DepositCheckRequest](#protobuf.DepositCheckRequest)
+    - [DepositCheckResponse](#protobuf.DepositCheckResponse)
+    - [DepositRequest](#protobuf.DepositRequest)
+    - [DepositResponse](#protobuf.DepositResponse)
     - [GetAccountBalancesRequest](#protobuf.GetAccountBalancesRequest)
     - [GetAccountBalancesResponse](#protobuf.GetAccountBalancesResponse)
-    - [GetAccountBalancesResponse.BalancesEntry](#protobuf.GetAccountBalancesResponse.BalancesEntry)
     - [ListAccountsRequest](#protobuf.ListAccountsRequest)
     - [ListAccountsResponse](#protobuf.ListAccountsResponse)
-    - [SendMoneyToQiwiRequest](#protobuf.SendMoneyToQiwiRequest)
-    - [SendMoneyToQiwiResponse](#protobuf.SendMoneyToQiwiResponse)
   
   
   
@@ -33,12 +34,13 @@
 <a name="protobuf.AddAccountRequest"/>
 
 ### AddAccountRequest
-
+Add/Update account in DB
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| token | [string](#string) |  |  |
+| token | [string](#string) |  | Qiwi API token: https://qiwi.com/api |
+| contractID | [string](#string) |  | contractID, Format: 79999999999 |
 
 
 
@@ -53,7 +55,79 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| contractID | [int64](#int64) |  |  |
+| contractID | [string](#string) |  |  |
+| operationLimit | [int64](#int64) |  |  |
+| monthLimit | [int64](#int64) |  |  |
+
+
+
+
+
+
+<a name="protobuf.DepositCheckRequest"/>
+
+### DepositCheckRequest
+Check status of deposit
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Deposit ID |
+
+
+
+
+
+
+<a name="protobuf.DepositCheckResponse"/>
+
+### DepositCheckResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Deposit ID |
+| status | [bool](#bool) |  | Status of deposit, if true it means that money came to the wallet |
+| amounts | [int64](#int64) | repeated | Amount per transaction |
+| comments | [string](#string) | repeated | Comment per transaction |
+| contractIDs | [string](#string) | repeated | ContractID per transaction, Format: 79999999999 |
+| links | [string](#string) | repeated | Link for user-friendly payments |
+| statuses | [bool](#bool) | repeated | Status per transaction |
+
+
+
+
+
+
+<a name="protobuf.DepositRequest"/>
+
+### DepositRequest
+Create deposit entity and return requisites for payment
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| amount | [int64](#int64) |  | Amount(RUB) |
+
+
+
+
+
+
+<a name="protobuf.DepositResponse"/>
+
+### DepositResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Deposit ID |
+| amounts | [int64](#int64) | repeated | Array of amounts |
+| comments | [string](#string) | repeated | Array of comments |
+| contractIDs | [string](#string) | repeated | Array of contractIDs |
+| links | [string](#string) | repeated | Array of user-friendly links |
 
 
 
@@ -63,12 +137,12 @@
 <a name="protobuf.GetAccountBalancesRequest"/>
 
 ### GetAccountBalancesRequest
-
+Return RUB balance for Qiwi account
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| contractID | [int64](#int64) |  |  |
+| contractID | [string](#string) |  | ContractID, Format: 79999999999 |
 
 
 
@@ -83,23 +157,7 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| balances | [GetAccountBalancesResponse.BalancesEntry](#protobuf.GetAccountBalancesResponse.BalancesEntry) | repeated |  |
-
-
-
-
-
-
-<a name="protobuf.GetAccountBalancesResponse.BalancesEntry"/>
-
-### GetAccountBalancesResponse.BalancesEntry
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| key | [string](#string) |  |  |
-| value | [double](#double) |  |  |
+| balance | [int64](#int64) |  | RUB balance |
 
 
 
@@ -109,7 +167,7 @@
 <a name="protobuf.ListAccountsRequest"/>
 
 ### ListAccountsRequest
-
+Return list of account stored in DB
 
 
 
@@ -124,40 +182,7 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| contractIDs | [int64](#int64) | repeated |  |
-
-
-
-
-
-
-<a name="protobuf.SendMoneyToQiwiRequest"/>
-
-### SendMoneyToQiwiRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| senderContractID | [int64](#int64) |  |  |
-| receiverContractID | [string](#string) |  |  |
-| currency | [string](#string) |  |  |
-| amount | [double](#double) |  |  |
-
-
-
-
-
-
-<a name="protobuf.SendMoneyToQiwiResponse"/>
-
-### SendMoneyToQiwiResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| status | [string](#string) |  |  |
+| contractIDs | [string](#string) | repeated | Array of contractIDs, Format: 79999999999 |
 
 
 
@@ -180,7 +205,8 @@
 | AddAccount | [AddAccountRequest](#protobuf.AddAccountRequest) | [AddAccountResponse](#protobuf.AddAccountRequest) |  |
 | ListAccounts | [ListAccountsRequest](#protobuf.ListAccountsRequest) | [ListAccountsResponse](#protobuf.ListAccountsRequest) |  |
 | GetAccountBalances | [GetAccountBalancesRequest](#protobuf.GetAccountBalancesRequest) | [GetAccountBalancesResponse](#protobuf.GetAccountBalancesRequest) |  |
-| SendMoneyToQiwi | [SendMoneyToQiwiRequest](#protobuf.SendMoneyToQiwiRequest) | [SendMoneyToQiwiResponse](#protobuf.SendMoneyToQiwiRequest) |  |
+| Deposit | [DepositRequest](#protobuf.DepositRequest) | [DepositResponse](#protobuf.DepositRequest) |  |
+| DepositCheck | [DepositCheckRequest](#protobuf.DepositCheckRequest) | [DepositCheckResponse](#protobuf.DepositCheckRequest) |  |
 
  
 

@@ -178,6 +178,19 @@ func (a Account) IsReadyForMakePayment(amount int64) (bool, error) {
 	return true, nil
 }
 
+func (a Account) CheckTransactionIsSuccess(days int, comment string, amount int64) (bool, error) {
+	paymentsHistory, err := a.getPaymentsHistory(days)
+	if status.Code(err) != 0 {
+		return false, err
+	}
+	for _, p := range paymentsHistory {
+		if p.Sum.Amount == float64(amount) && p.Comment == comment && p.Sum.Currency == currency {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
 //todo implement ability to refresh wallet
 func (a Account) init() (Account, error) {
 	c, _ := a.client()

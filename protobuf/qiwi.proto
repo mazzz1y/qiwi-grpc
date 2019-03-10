@@ -11,17 +11,20 @@ service Qiwi {
   rpc AddAccount (AddAccountRequest) returns (AddAccountResponse) {}
   rpc ListAccounts (ListAccountsRequest) returns (ListAccountsResponse) {}
   rpc GetAccountBalances (GetAccountBalancesRequest) returns (GetAccountBalancesResponse) {}
-//  rpc SendMoneyToQiwi (SendMoneyToQiwiRequest) returns (SendMoneyToQiwiResponse) {} DEPRECATED
   rpc Deposit (DepositRequest) returns (DepositResponse) {}
-//  rpc Withdrawal (WithdrawalRequest) returns (WithdrawalResponse) {}
+  rpc DepositCheck (DepositCheckRequest) returns (DepositCheckResponse) {}
+  //  rpc Withdrawal (WithdrawalRequest) returns (WithdrawalResponse) {}
 
 }
 
-
+/**
+ * Add/Update account in DB
+*/
 message AddAccountRequest {
-  string token = 1;
-  string contractID = 2;
+  string token = 1; // Qiwi API token: https://qiwi.com/api
+  string contractID = 2; // contractID, Format: 79999999999
 }
+
 
 message AddAccountResponse {
   string contractID = 1;
@@ -29,41 +32,54 @@ message AddAccountResponse {
   int64 monthLimit = 3;
 }
 
+/**
+ * Return list of account stored in DB
+*/
 message ListAccountsRequest {}
 
 message ListAccountsResponse {
-  repeated string contractIDs = 1;
+  repeated string contractIDs = 1; // Array of contractIDs, Format: 79999999999
 }
 
+/**
+ * Return RUB balance for Qiwi account
+*/
 message GetAccountBalancesRequest {
-  string contractID = 1;
+  string contractID = 1; // ContractID, Format: 79999999999
 }
 message GetAccountBalancesResponse {
-  int64 balance = 1;
+  int64 balance = 1; // RUB balance
 }
 
-// DEPRECATED
-//message SendMoneyToQiwiRequest {
-//  string senderContractID = 1;
-//  string receiverContractID = 2;
-//  string currency = 3;
-//  int64 amount = 4;
-//}
-//message SendMoneyToQiwiResponse {
-//  string status = 1;g
-//}
-
+/**
+ * Create deposit entity and return requisites for payment
+*/
 message DepositRequest {
-  int64 amount = 1;
+  int64 amount = 1; // Amount(RUB)
 }
 message DepositResponse {
-  string id = 1;
-  repeated int64 amounts = 2;
-  repeated string comments = 3;
-  repeated string contractIDs = 4;
-  repeated string links = 5;
+  string id = 1; // Deposit ID
+  repeated int64 amounts = 2; // Array of amounts
+  repeated string comments = 3; // Array of comments
+  repeated string contractIDs = 4; // Array of contractIDs
+  repeated string links = 5; // Array of user-friendly links
 }
 
+/**
+ * Check status of deposit
+*/
+message DepositCheckRequest {
+  string id = 1; // Deposit ID
+}
+message DepositCheckResponse {
+  string id = 1; // Deposit ID
+  bool status = 2; // Status of deposit, if true it means that money came to the wallet
+  repeated int64 amounts = 3; // Amount per transaction
+  repeated string comments = 4; // Comment per transaction
+  repeated string contractIDs = 5; // ContractID per transaction, Format: 79999999999
+  repeated string links = 6; // Link for user-friendly payments
+  repeated bool statuses = 7; // Status per transaction
+}
 //TODO
 //message WithdrawalRequest {}
 //message WithdrawalResponse {}
