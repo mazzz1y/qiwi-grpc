@@ -59,6 +59,7 @@ func (d Deposit) Check() (Deposit, error) {
 }
 
 //todo check if wallet is not blocked for payment
+//todo block available sum
 func (d Deposit) generateTransactions() ([]DepositTransaction, error) {
 	accounts := Account{}.List()
 	amount := d.Amount
@@ -78,6 +79,7 @@ func (d Deposit) generateTransactions() ([]DepositTransaction, error) {
 		}
 		if availSumForDeposit >= amount {
 			depositTransactions = append(depositTransactions, DepositTransaction{
+				ID: primitive.NewObjectID(),
 				Amount:     amount,
 				Comment:    comment,
 				ContractID: acc.ContractID,
@@ -86,6 +88,7 @@ func (d Deposit) generateTransactions() ([]DepositTransaction, error) {
 			amount -= amount
 		} else if availSumForDeposit <= amount {
 			depositTransactions = append(depositTransactions, DepositTransaction{
+				ID: primitive.NewObjectID(),
 				Amount:     availSumForDeposit,
 				Comment:    comment,
 				ContractID: acc.ContractID,

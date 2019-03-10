@@ -7,15 +7,19 @@ import (
 	pb "qiwi/protobuf"
 )
 
-func (s *Server) AddAccount(ctx context.Context, in *pb.AddAccountRequest) (*pb.AddAccountResponse, error) {
-	a := Account{Token: in.Token, ContractID: in.ContractID}
-	a, err := a.Create()
+func (s *Server) CreateOrUpdateAccount(ctx context.Context, in *pb.CreateOrUpdateAccountRequest) (*pb.CreateOrUpdateAccountResponse, error) {
+	a := Account{Token: in.Token}
+	a, err := a.CreateOrUpdate()
 	if err != nil {
 		return nil, err
 	}
-	return &pb.AddAccountResponse{
-		ContractID:     a.ContractID,
-		OperationLimit: a.OperationLimit},
+	return &pb.CreateOrUpdateAccountResponse{
+		ContractID:             a.ContractID,
+		OperationLimit:         a.OperationLimit,
+		MaxAllowableBalance:    a.MaxAllowableBalance,
+		OperationLimitPerMonth: a.OperationLimitPerMonth,
+		Balance:                a.Balance,
+		Blocked:                a.Blocked},
 		nil
 }
 

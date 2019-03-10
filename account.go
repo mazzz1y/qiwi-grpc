@@ -48,7 +48,7 @@ type Account struct {
 }
 
 // Create or update account with a new token
-func (a Account) Create() (Account, error) {
+func (a Account) CreateOrUpdate() (Account, error) {
 	a, err := a.init()
 	if status.Code(err) != 0 {
 		return a, err
@@ -191,17 +191,17 @@ func (a Account) CheckTransactionIsSuccess(days int, comment string, amount int6
 	return false, nil
 }
 
-//todo implement ability to refresh wallet
+// Initialize account entity
 func (a Account) init() (Account, error) {
 	c, _ := a.client()
 	profile, err := c.Profile.Current()
 	if err != nil {
 		return a, status.Errorf(codes.InvalidArgument, err.Error())
 	}
-	if profile.ContractInfo.Blocked {
-		return a, status.Errorf(codes.PermissionDenied, err.Error())
-	}
-	log.Println(a)
+
+	// need to init contractID because balance requests needs to know this
+	a.ContractID = strconv.FormatInt(profile.AuthInfo.PersonID, 10)
+
 	balance, err := a.GetBalance()
 	log.Println(err)
 	if err != nil {
@@ -209,13 +209,12 @@ func (a Account) init() (Account, error) {
 	}
 
 	identLevel := getQiwiIdentificationLevel(profile)
-
-	a.ContractID = strconv.FormatInt(profile.AuthInfo.PersonID, 10)
 	a.OperationLimit = operationLimit[identLevel]
 	a.MaxAllowableBalance = maxAllowableBalance[identLevel]
 	a.OperationLimitPerMonth = operationLimitPerMonth[identLevel]
 	a.OperationLimit = operationLimit[identLevel]
 	a.Balance = balance
+	a.Blocked = profile.ContractInfo.Blocked
 
 	return a, nil
 }
