@@ -79,7 +79,7 @@ func (d Deposit) generateTransactions() ([]DepositTransaction, error) {
 		}
 		if availSumForDeposit >= amount {
 			depositTransactions = append(depositTransactions, DepositTransaction{
-				ID: primitive.NewObjectID(),
+				ID:         primitive.NewObjectID(),
 				Amount:     amount,
 				Comment:    comment,
 				ContractID: acc.ContractID,
@@ -88,7 +88,7 @@ func (d Deposit) generateTransactions() ([]DepositTransaction, error) {
 			amount -= amount
 		} else if availSumForDeposit <= amount {
 			depositTransactions = append(depositTransactions, DepositTransaction{
-				ID: primitive.NewObjectID(),
+				ID:         primitive.NewObjectID(),
 				Amount:     availSumForDeposit,
 				Comment:    comment,
 				ContractID: acc.ContractID,
