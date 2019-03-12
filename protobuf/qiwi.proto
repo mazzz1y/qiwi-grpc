@@ -78,8 +78,8 @@ message DepositCheckRequest {
     string id = 1; // Deposit ID
 }
 message DepositCheckResponse {
-    string id = 1; // Deposit ID
-    bool status = 2; // Status of deposit, if true it means that money came to the wallet
+    string id = 1; // Deposit ID 
+    string status = 2; // Status of deposit, may be paid, pending, closed
     repeated int64 amounts = 3; // Amount per transaction
     repeated string comments = 4; // Comment per transaction
     repeated string contractIDs = 5; // ContractID per transaction, Format: 79999999999

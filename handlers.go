@@ -3,8 +3,9 @@ package main
 import "C"
 import (
 	"context"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	pb "qiwi/protobuf"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func (s *Server) CreateOrUpdateAccount(ctx context.Context, in *pb.CreateOrUpdateAccountRequest) (*pb.CreateOrUpdateAccountResponse, error) {
@@ -14,18 +15,18 @@ func (s *Server) CreateOrUpdateAccount(ctx context.Context, in *pb.CreateOrUpdat
 		return nil, err
 	}
 	return &pb.CreateOrUpdateAccountResponse{
-		ContractID:             a.ContractID,
-		OperationLimit:         a.OperationLimit,
-		MaxAllowableBalance:    a.MaxAllowableBalance,
-		OperationLimitPerMonth: a.OperationLimitPerMonth,
-		Balance:                a.Balance,
-		Blocked:                a.Blocked},
+			ContractID:             a.ContractID,
+			OperationLimit:         a.OperationLimit,
+			MaxAllowableBalance:    a.MaxAllowableBalance,
+			OperationLimitPerMonth: a.OperationLimitPerMonth,
+			Balance:                a.Balance,
+			Blocked:                a.Blocked},
 		nil
 }
 
 func (s *Server) ListAccounts(ctx context.Context, in *pb.ListAccountsRequest) (*pb.ListAccountsResponse, error) {
 	return &pb.ListAccountsResponse{
-		ContractIDs: Account{}.ListString()},
+			ContractIDs: Account{}.ListString()},
 		nil
 }
 
@@ -35,7 +36,7 @@ func (s *Server) GetAccountBalances(ctx context.Context, in *pb.GetAccountBalanc
 		return nil, err
 	}
 	return &pb.GetAccountBalancesResponse{
-		Balance: b},
+			Balance: b},
 		nil
 }
 
@@ -57,11 +58,11 @@ func (s *Server) Deposit(ctx context.Context, in *pb.DepositRequest) (*pb.Deposi
 		return nil, err
 	}
 	return &pb.DepositResponse{
-		Id:          deposit.ID.Hex(),
-		ContractIDs: contractIDs,
-		Amounts:     amounts,
-		Links:       links,
-		Comments:    comments},
+			Id:          deposit.ID.Hex(),
+			ContractIDs: contractIDs,
+			Amounts:     amounts,
+			Links:       links,
+			Comments:    comments},
 		nil
 }
 
@@ -92,12 +93,12 @@ func (s *Server) DepositCheck(ctx context.Context, in *pb.DepositCheckRequest) (
 		return nil, err
 	}
 	return &pb.DepositCheckResponse{
-		Id:          deposit.ID.Hex(),
-		Status:      deposit.Status,
-		ContractIDs: contractIDs,
-		Amounts:     amounts,
-		Links:       links,
-		Comments:    comments,
-		Statuses:    statuses},
+			Id:          deposit.ID.Hex(),
+			Status:      deposit.Status,
+			ContractIDs: contractIDs,
+			Amounts:     amounts,
+			Links:       links,
+			Comments:    comments,
+			Statuses:    statuses},
 		nil
 }

@@ -3,14 +3,15 @@ package main
 import (
 	"context"
 	"errors"
-	"go.mongodb.org/mongo-driver/bson"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"log"
 	"net/url"
 	"qiwi/client"
 	"strconv"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 const (
@@ -254,4 +255,13 @@ func getQiwiIdentificationLevel(p client.ProfileResponse) string {
 		}
 	}
 	return ""
+}
+
+func getBalanceSum() int64 {
+	var b int64
+	accounts := Account{}.List()
+	for _, acc := range accounts {
+		b += acc.Balance
+	}
+	return b
 }

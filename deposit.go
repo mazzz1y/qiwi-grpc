@@ -2,12 +2,13 @@ package main
 
 import (
 	"context"
+	"math/rand"
+	"strconv"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"math/rand"
-	"strconv"
 )
 
 const maxAmountPerWallet = 15000
@@ -18,7 +19,7 @@ type Deposit struct {
 	ID           primitive.ObjectID   `bson:"_id"`
 	Amount       int64                `bson:"amount"`
 	Transactions []DepositTransaction `bson:"transactions"`
-	Status       bool                 `bson:"status"`
+	Status       string               `bson:"status"` // paid, pending, closed
 }
 
 type DepositTransaction struct {
@@ -37,6 +38,7 @@ func (d Deposit) Create() (Deposit, error) {
 	}
 
 	d.Transactions = tr
+	d.Status = "pending"
 	d.ID = primitive.NewObjectID()
 
 	_, err = depositCollection.InsertOne(context.TODO(), d)
@@ -113,7 +115,7 @@ func (d Deposit) updateTransactionsStatus() (Deposit, error) {
 			return d, nil
 		}
 	}
-	d.Status = true
+	d.Status = "accepted"
 	_, err := depositCollection.ReplaceOne(context.TODO(), bson.M{"_id": d.ID}, &d)
 	if err != nil {
 		return d, status.Errorf(codes.Internal, "failed to update transaction status")
