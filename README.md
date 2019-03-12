@@ -22,6 +22,8 @@ go run *.go
 
 ### Protobuf documentation
 
+See [Here](protobuf/readme.md)
+
 *Powered by: https://github.com/pseudomuto/protoc-gen-doc*
 
 ##### Generate

@@ -4,12 +4,14 @@
 ## Table of Contents
 
 - [qiwi.proto](#qiwi.proto)
-    - [AddAccountRequest](#protobuf.AddAccountRequest)
-    - [AddAccountResponse](#protobuf.AddAccountResponse)
+    - [CreateOrUpdateAccountRequest](#protobuf.CreateOrUpdateAccountRequest)
+    - [CreateOrUpdateAccountResponse](#protobuf.CreateOrUpdateAccountResponse)
     - [DepositCheckRequest](#protobuf.DepositCheckRequest)
     - [DepositCheckResponse](#protobuf.DepositCheckResponse)
-    - [DepositRequest](#protobuf.DepositRequest)
-    - [DepositResponse](#protobuf.DepositResponse)
+    - [DepositCloseRequest](#protobuf.DepositCloseRequest)
+    - [DepositCloseResponse](#protobuf.DepositCloseResponse)
+    - [DepositCreateRequest](#protobuf.DepositCreateRequest)
+    - [DepositCreateResponse](#protobuf.DepositCreateResponse)
     - [GetAccountBalancesRequest](#protobuf.GetAccountBalancesRequest)
     - [GetAccountBalancesResponse](#protobuf.GetAccountBalancesResponse)
     - [ListAccountsRequest](#protobuf.ListAccountsRequest)
@@ -31,25 +33,24 @@
 
 
 
-<a name="protobuf.AddAccountRequest"/>
+<a name="protobuf.CreateOrUpdateAccountRequest"/>
 
-### AddAccountRequest
+### CreateOrUpdateAccountRequest
 Add/Update account in DB
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | token | [string](#string) |  | Qiwi API token: https://qiwi.com/api |
-| contractID | [string](#string) |  | contractID, Format: 79999999999 |
 
 
 
 
 
 
-<a name="protobuf.AddAccountResponse"/>
+<a name="protobuf.CreateOrUpdateAccountResponse"/>
 
-### AddAccountResponse
+### CreateOrUpdateAccountResponse
 
 
 
@@ -57,7 +58,10 @@ Add/Update account in DB
 | ----- | ---- | ----- | ----------- |
 | contractID | [string](#string) |  |  |
 | operationLimit | [int64](#int64) |  |  |
-| monthLimit | [int64](#int64) |  |  |
+| maxAllowableBalance | [int64](#int64) |  |  |
+| operationLimitPerMonth | [int64](#int64) |  |  |
+| balance | [int64](#int64) |  |  |
+| blocked | [bool](#bool) |  |  |
 
 
 
@@ -88,7 +92,7 @@ Check status of deposit
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | id | [string](#string) |  | Deposit ID |
-| status | [bool](#bool) |  | Status of deposit, if true it means that money came to the wallet |
+| status | [string](#string) |  | Status of deposit(paid, pending, closed) |
 | amounts | [int64](#int64) | repeated | Amount per transaction |
 | comments | [string](#string) | repeated | Comment per transaction |
 | contractIDs | [string](#string) | repeated | ContractID per transaction, Format: 79999999999 |
@@ -100,9 +104,40 @@ Check status of deposit
 
 
 
-<a name="protobuf.DepositRequest"/>
+<a name="protobuf.DepositCloseRequest"/>
 
-### DepositRequest
+### DepositCloseRequest
+Close deposit
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Deposit ID |
+
+
+
+
+
+
+<a name="protobuf.DepositCloseResponse"/>
+
+### DepositCloseResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Deposit ID |
+| status | [string](#string) |  | Deposit status (paid, pending, closed) |
+
+
+
+
+
+
+<a name="protobuf.DepositCreateRequest"/>
+
+### DepositCreateRequest
 Create deposit entity and return requisites for payment
 
 
@@ -115,9 +150,9 @@ Create deposit entity and return requisites for payment
 
 
 
-<a name="protobuf.DepositResponse"/>
+<a name="protobuf.DepositCreateResponse"/>
 
-### DepositResponse
+### DepositCreateResponse
 
 
 
@@ -202,10 +237,11 @@ Return list of account stored in DB
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| AddAccount | [AddAccountRequest](#protobuf.AddAccountRequest) | [AddAccountResponse](#protobuf.AddAccountRequest) |  |
+| CreateOrUpdateAccount | [CreateOrUpdateAccountRequest](#protobuf.CreateOrUpdateAccountRequest) | [CreateOrUpdateAccountResponse](#protobuf.CreateOrUpdateAccountRequest) |  |
 | ListAccounts | [ListAccountsRequest](#protobuf.ListAccountsRequest) | [ListAccountsResponse](#protobuf.ListAccountsRequest) |  |
 | GetAccountBalances | [GetAccountBalancesRequest](#protobuf.GetAccountBalancesRequest) | [GetAccountBalancesResponse](#protobuf.GetAccountBalancesRequest) |  |
-| Deposit | [DepositRequest](#protobuf.DepositRequest) | [DepositResponse](#protobuf.DepositRequest) |  |
+| DepositCreate | [DepositCreateRequest](#protobuf.DepositCreateRequest) | [DepositCreateResponse](#protobuf.DepositCreateRequest) |  |
+| DepositClose | [DepositCloseRequest](#protobuf.DepositCloseRequest) | [DepositCloseResponse](#protobuf.DepositCloseRequest) |  |
 | DepositCheck | [DepositCheckRequest](#protobuf.DepositCheckRequest) | [DepositCheckResponse](#protobuf.DepositCheckRequest) |  |
 
  
