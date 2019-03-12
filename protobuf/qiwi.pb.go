@@ -296,46 +296,46 @@ func (m *GetAccountBalancesResponse) GetBalance() int64 {
 
 //*
 // Create deposit entity and return requisites for payment
-type DepositRequest struct {
+type DepositCreateRequest struct {
 	Amount               int64    `protobuf:"varint,1,opt,name=amount,proto3" json:"amount,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *DepositRequest) Reset()         { *m = DepositRequest{} }
-func (m *DepositRequest) String() string { return proto.CompactTextString(m) }
-func (*DepositRequest) ProtoMessage()    {}
-func (*DepositRequest) Descriptor() ([]byte, []int) {
+func (m *DepositCreateRequest) Reset()         { *m = DepositCreateRequest{} }
+func (m *DepositCreateRequest) String() string { return proto.CompactTextString(m) }
+func (*DepositCreateRequest) ProtoMessage()    {}
+func (*DepositCreateRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_4cdcb2c5ad188f99, []int{6}
 }
 
-func (m *DepositRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_DepositRequest.Unmarshal(m, b)
+func (m *DepositCreateRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DepositCreateRequest.Unmarshal(m, b)
 }
-func (m *DepositRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_DepositRequest.Marshal(b, m, deterministic)
+func (m *DepositCreateRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DepositCreateRequest.Marshal(b, m, deterministic)
 }
-func (m *DepositRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DepositRequest.Merge(m, src)
+func (m *DepositCreateRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DepositCreateRequest.Merge(m, src)
 }
-func (m *DepositRequest) XXX_Size() int {
-	return xxx_messageInfo_DepositRequest.Size(m)
+func (m *DepositCreateRequest) XXX_Size() int {
+	return xxx_messageInfo_DepositCreateRequest.Size(m)
 }
-func (m *DepositRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_DepositRequest.DiscardUnknown(m)
+func (m *DepositCreateRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DepositCreateRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_DepositRequest proto.InternalMessageInfo
+var xxx_messageInfo_DepositCreateRequest proto.InternalMessageInfo
 
-func (m *DepositRequest) GetAmount() int64 {
+func (m *DepositCreateRequest) GetAmount() int64 {
 	if m != nil {
 		return m.Amount
 	}
 	return 0
 }
 
-type DepositResponse struct {
+type DepositCreateResponse struct {
 	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Amounts              []int64  `protobuf:"varint,2,rep,packed,name=amounts,proto3" json:"amounts,omitempty"`
 	Comments             []string `protobuf:"bytes,3,rep,name=comments,proto3" json:"comments,omitempty"`
@@ -346,64 +346,152 @@ type DepositResponse struct {
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *DepositResponse) Reset()         { *m = DepositResponse{} }
-func (m *DepositResponse) String() string { return proto.CompactTextString(m) }
-func (*DepositResponse) ProtoMessage()    {}
-func (*DepositResponse) Descriptor() ([]byte, []int) {
+func (m *DepositCreateResponse) Reset()         { *m = DepositCreateResponse{} }
+func (m *DepositCreateResponse) String() string { return proto.CompactTextString(m) }
+func (*DepositCreateResponse) ProtoMessage()    {}
+func (*DepositCreateResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_4cdcb2c5ad188f99, []int{7}
 }
 
-func (m *DepositResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_DepositResponse.Unmarshal(m, b)
+func (m *DepositCreateResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DepositCreateResponse.Unmarshal(m, b)
 }
-func (m *DepositResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_DepositResponse.Marshal(b, m, deterministic)
+func (m *DepositCreateResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DepositCreateResponse.Marshal(b, m, deterministic)
 }
-func (m *DepositResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DepositResponse.Merge(m, src)
+func (m *DepositCreateResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DepositCreateResponse.Merge(m, src)
 }
-func (m *DepositResponse) XXX_Size() int {
-	return xxx_messageInfo_DepositResponse.Size(m)
+func (m *DepositCreateResponse) XXX_Size() int {
+	return xxx_messageInfo_DepositCreateResponse.Size(m)
 }
-func (m *DepositResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_DepositResponse.DiscardUnknown(m)
+func (m *DepositCreateResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DepositCreateResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_DepositResponse proto.InternalMessageInfo
+var xxx_messageInfo_DepositCreateResponse proto.InternalMessageInfo
 
-func (m *DepositResponse) GetId() string {
+func (m *DepositCreateResponse) GetId() string {
 	if m != nil {
 		return m.Id
 	}
 	return ""
 }
 
-func (m *DepositResponse) GetAmounts() []int64 {
+func (m *DepositCreateResponse) GetAmounts() []int64 {
 	if m != nil {
 		return m.Amounts
 	}
 	return nil
 }
 
-func (m *DepositResponse) GetComments() []string {
+func (m *DepositCreateResponse) GetComments() []string {
 	if m != nil {
 		return m.Comments
 	}
 	return nil
 }
 
-func (m *DepositResponse) GetContractIDs() []string {
+func (m *DepositCreateResponse) GetContractIDs() []string {
 	if m != nil {
 		return m.ContractIDs
 	}
 	return nil
 }
 
-func (m *DepositResponse) GetLinks() []string {
+func (m *DepositCreateResponse) GetLinks() []string {
 	if m != nil {
 		return m.Links
 	}
 	return nil
+}
+
+//*
+// Close deposit
+type DepositCloseRequest struct {
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *DepositCloseRequest) Reset()         { *m = DepositCloseRequest{} }
+func (m *DepositCloseRequest) String() string { return proto.CompactTextString(m) }
+func (*DepositCloseRequest) ProtoMessage()    {}
+func (*DepositCloseRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4cdcb2c5ad188f99, []int{8}
+}
+
+func (m *DepositCloseRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DepositCloseRequest.Unmarshal(m, b)
+}
+func (m *DepositCloseRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DepositCloseRequest.Marshal(b, m, deterministic)
+}
+func (m *DepositCloseRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DepositCloseRequest.Merge(m, src)
+}
+func (m *DepositCloseRequest) XXX_Size() int {
+	return xxx_messageInfo_DepositCloseRequest.Size(m)
+}
+func (m *DepositCloseRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DepositCloseRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DepositCloseRequest proto.InternalMessageInfo
+
+func (m *DepositCloseRequest) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+type DepositCloseResponse struct {
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Status               string   `protobuf:"bytes,2,opt,name=status,proto3" json:"status,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *DepositCloseResponse) Reset()         { *m = DepositCloseResponse{} }
+func (m *DepositCloseResponse) String() string { return proto.CompactTextString(m) }
+func (*DepositCloseResponse) ProtoMessage()    {}
+func (*DepositCloseResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4cdcb2c5ad188f99, []int{9}
+}
+
+func (m *DepositCloseResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DepositCloseResponse.Unmarshal(m, b)
+}
+func (m *DepositCloseResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DepositCloseResponse.Marshal(b, m, deterministic)
+}
+func (m *DepositCloseResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DepositCloseResponse.Merge(m, src)
+}
+func (m *DepositCloseResponse) XXX_Size() int {
+	return xxx_messageInfo_DepositCloseResponse.Size(m)
+}
+func (m *DepositCloseResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DepositCloseResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DepositCloseResponse proto.InternalMessageInfo
+
+func (m *DepositCloseResponse) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+func (m *DepositCloseResponse) GetStatus() string {
+	if m != nil {
+		return m.Status
+	}
+	return ""
 }
 
 //*
@@ -419,7 +507,7 @@ func (m *DepositCheckRequest) Reset()         { *m = DepositCheckRequest{} }
 func (m *DepositCheckRequest) String() string { return proto.CompactTextString(m) }
 func (*DepositCheckRequest) ProtoMessage()    {}
 func (*DepositCheckRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cdcb2c5ad188f99, []int{8}
+	return fileDescriptor_4cdcb2c5ad188f99, []int{10}
 }
 
 func (m *DepositCheckRequest) XXX_Unmarshal(b []byte) error {
@@ -464,7 +552,7 @@ func (m *DepositCheckResponse) Reset()         { *m = DepositCheckResponse{} }
 func (m *DepositCheckResponse) String() string { return proto.CompactTextString(m) }
 func (*DepositCheckResponse) ProtoMessage()    {}
 func (*DepositCheckResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4cdcb2c5ad188f99, []int{9}
+	return fileDescriptor_4cdcb2c5ad188f99, []int{11}
 }
 
 func (m *DepositCheckResponse) XXX_Unmarshal(b []byte) error {
@@ -541,8 +629,10 @@ func init() {
 	proto.RegisterType((*ListAccountsResponse)(nil), "protobuf.ListAccountsResponse")
 	proto.RegisterType((*GetAccountBalancesRequest)(nil), "protobuf.GetAccountBalancesRequest")
 	proto.RegisterType((*GetAccountBalancesResponse)(nil), "protobuf.GetAccountBalancesResponse")
-	proto.RegisterType((*DepositRequest)(nil), "protobuf.DepositRequest")
-	proto.RegisterType((*DepositResponse)(nil), "protobuf.DepositResponse")
+	proto.RegisterType((*DepositCreateRequest)(nil), "protobuf.DepositCreateRequest")
+	proto.RegisterType((*DepositCreateResponse)(nil), "protobuf.DepositCreateResponse")
+	proto.RegisterType((*DepositCloseRequest)(nil), "protobuf.DepositCloseRequest")
+	proto.RegisterType((*DepositCloseResponse)(nil), "protobuf.DepositCloseResponse")
 	proto.RegisterType((*DepositCheckRequest)(nil), "protobuf.DepositCheckRequest")
 	proto.RegisterType((*DepositCheckResponse)(nil), "protobuf.DepositCheckResponse")
 }
@@ -550,41 +640,43 @@ func init() {
 func init() { proto.RegisterFile("qiwi.proto", fileDescriptor_4cdcb2c5ad188f99) }
 
 var fileDescriptor_4cdcb2c5ad188f99 = []byte{
-	// 539 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x53, 0x5d, 0x6e, 0xd3, 0x4c,
-	0x14, 0xad, 0xe3, 0xfc, 0xde, 0xef, 0x23, 0x48, 0x93, 0x34, 0x9a, 0x5a, 0xb4, 0xb2, 0x06, 0x28,
-	0x7e, 0x8a, 0x10, 0xa0, 0x0a, 0x89, 0x17, 0x9a, 0x56, 0x42, 0x48, 0x45, 0x0d, 0x96, 0x58, 0xc0,
-	0xc4, 0x19, 0xd4, 0x21, 0x8e, 0xc7, 0xf5, 0x4c, 0x14, 0x36, 0xc0, 0x33, 0xeb, 0x61, 0x07, 0x2c,
-	0x0b, 0xd9, 0x1e, 0x3b, 0xe3, 0xd4, 0x4e, 0x9f, 0xac, 0x33, 0xf7, 0xdc, 0x9f, 0x73, 0x7d, 0x2e,
-	0xc0, 0x3d, 0xdf, 0xf2, 0x69, 0x9c, 0x08, 0x25, 0x50, 0x3f, 0xfb, 0x2c, 0x36, 0xdf, 0xc9, 0x3b,
-	0x78, 0x76, 0x95, 0x30, 0xaa, 0xd8, 0x6d, 0xf2, 0x2d, 0x5e, 0x52, 0xc5, 0x2e, 0x83, 0x40, 0x6c,
-	0x22, 0xe5, 0xb3, 0xfb, 0x0d, 0x93, 0x0a, 0x8d, 0xa1, 0xa3, 0xc4, 0x8a, 0x45, 0xd8, 0x72, 0x2d,
-	0x6f, 0xe0, 0xe7, 0x80, 0xfc, 0x6a, 0xc1, 0x69, 0x43, 0x9a, 0x8c, 0x45, 0x24, 0x19, 0x3a, 0x03,
-	0x08, 0x44, 0xa4, 0x12, 0x1a, 0xa8, 0xcf, 0xd7, 0x3a, 0xd9, 0x78, 0x41, 0xe7, 0x30, 0x14, 0x31,
-	0x4b, 0xa8, 0xe2, 0x22, 0xba, 0xe1, 0x6b, 0xae, 0x70, 0xcb, 0xb5, 0x3c, 0xdb, 0xdf, 0x7b, 0x45,
-	0xaf, 0x61, 0xb4, 0xa6, 0x3f, 0x2f, 0xc3, 0x50, 0x6c, 0xe9, 0x22, 0x64, 0x33, 0x1a, 0xd2, 0x28,
-	0x60, 0xd8, 0xce, 0xc8, 0x75, 0x21, 0x74, 0x01, 0x93, 0x6a, 0x8d, 0x39, 0x4b, 0xbe, 0x88, 0x48,
-	0xdd, 0xe1, 0x76, 0x96, 0xd4, 0x10, 0x45, 0x18, 0x7a, 0x0b, 0x5d, 0xbd, 0x93, 0x11, 0x0b, 0x98,
-	0x45, 0x42, 0x11, 0xac, 0xd8, 0x12, 0x77, 0x5d, 0xcb, 0xeb, 0xfb, 0x05, 0x24, 0xc7, 0x30, 0xba,
-	0xe1, 0x52, 0x69, 0xf1, 0x52, 0x2f, 0x8d, 0xbc, 0x87, 0x71, 0xf5, 0x59, 0x2f, 0xc5, 0x85, 0xff,
-	0x76, 0x2b, 0x90, 0xd8, 0x72, 0x6d, 0x6f, 0xe0, 0x9b, 0x4f, 0xe4, 0x03, 0x9c, 0x7c, 0x62, 0x45,
-	0xa2, 0x56, 0x54, 0x94, 0x7d, 0x6c, 0xa7, 0xe4, 0x02, 0x9c, 0xba, 0x64, 0xdd, 0xdc, 0xd0, 0x67,
-	0x55, 0xf4, 0x11, 0x0f, 0x86, 0xd7, 0x2c, 0x16, 0x92, 0x97, 0x7f, 0x7d, 0x02, 0x5d, 0xba, 0x4e,
-	0xab, 0x68, 0xaa, 0x46, 0xe4, 0xb7, 0x05, 0x4f, 0x4b, 0xaa, 0xae, 0x3b, 0x84, 0x16, 0x5f, 0xea,
-	0x69, 0x5a, 0x7c, 0x99, 0xf6, 0xc9, 0xd9, 0x12, 0xb7, 0x5c, 0x3b, 0xed, 0xa3, 0x21, 0x72, 0xa0,
-	0x1f, 0x88, 0xf5, 0x9a, 0xa5, 0x21, 0x3b, 0xd3, 0x5e, 0xe2, 0xfd, 0xd5, 0xb4, 0x1f, 0xac, 0x26,
-	0x75, 0x62, 0xc8, 0xa3, 0x95, 0xc4, 0x9d, 0x2c, 0x96, 0x03, 0xf2, 0x12, 0x46, 0x7a, 0xa0, 0xab,
-	0x3b, 0x16, 0xac, 0x0a, 0x01, 0x7b, 0x43, 0x91, 0xbf, 0x16, 0x8c, 0xab, 0xbc, 0x86, 0xe9, 0x27,
-	0xd0, 0x95, 0x8a, 0xaa, 0x8d, 0xcc, 0xfc, 0x38, 0xf0, 0x35, 0x32, 0x55, 0xd9, 0xcd, 0xaa, 0xda,
-	0x87, 0x55, 0x75, 0x0e, 0xa8, 0xea, 0x1a, 0xaa, 0xd2, 0x9a, 0x79, 0x5f, 0x26, 0x71, 0xcf, 0xb5,
-	0xbd, 0xbe, 0x5f, 0xe2, 0x37, 0x7f, 0x6c, 0x68, 0x7f, 0xe5, 0x5b, 0x8e, 0x7e, 0xc0, 0x71, 0xed,
-	0x0d, 0xa2, 0xf3, 0x69, 0x71, 0xde, 0xd3, 0x43, 0xb7, 0xed, 0xbc, 0x7a, 0x94, 0x97, 0x2f, 0x89,
-	0x1c, 0xa1, 0x5b, 0xf8, 0xdf, 0x74, 0x34, 0x3a, 0xdd, 0xa5, 0xd6, 0x1c, 0x80, 0x73, 0xd6, 0x14,
-	0x2e, 0x0b, 0x52, 0x40, 0x0f, 0xbd, 0x8a, 0x9e, 0xef, 0xf2, 0x1a, 0xcf, 0xc0, 0x79, 0x71, 0x98,
-	0x54, 0xb6, 0xf8, 0x08, 0x3d, 0xfd, 0xcb, 0x11, 0xde, 0xa5, 0x54, 0x9d, 0xee, 0x9c, 0xd4, 0x44,
-	0x4c, 0xd5, 0xa6, 0x69, 0x4c, 0xd5, 0x35, 0xa6, 0x33, 0x55, 0xd7, 0x79, 0x8d, 0x1c, 0xcd, 0x9e,
-	0xcc, 0x06, 0xe9, 0xaf, 0x9b, 0xa7, 0xb4, 0xb9, 0xb5, 0xe8, 0x66, 0xfc, 0xb7, 0xff, 0x02, 0x00,
-	0x00, 0xff, 0xff, 0x5a, 0x4e, 0x8f, 0x59, 0x9b, 0x05, 0x00, 0x00,
+	// 571 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x54, 0xdd, 0x6e, 0xd3, 0x4c,
+	0x10, 0xad, 0xe3, 0x24, 0x4d, 0xe6, 0xfb, 0xda, 0x8b, 0xcd, 0x8f, 0x16, 0x8b, 0x06, 0x6b, 0x81,
+	0x92, 0xab, 0x08, 0x01, 0xaa, 0x90, 0x90, 0x90, 0x1a, 0x2a, 0x21, 0xa4, 0xa2, 0x06, 0x4b, 0x3c,
+	0xc0, 0xc6, 0x59, 0xd4, 0x25, 0xb6, 0xd7, 0xf5, 0x6e, 0x14, 0x5e, 0x80, 0x47, 0xe0, 0x8e, 0x07,
+	0xe2, 0xb1, 0x90, 0xed, 0xb5, 0xbd, 0x49, 0xed, 0x54, 0x5c, 0x45, 0xb3, 0x33, 0xe7, 0x9c, 0x99,
+	0x93, 0x19, 0x03, 0xdc, 0xf1, 0x2d, 0x9f, 0xc5, 0x89, 0x50, 0x02, 0xf5, 0xb2, 0x9f, 0xe5, 0xe6,
+	0x1b, 0x79, 0x03, 0x8f, 0x3f, 0x24, 0x8c, 0x2a, 0x76, 0x93, 0x7c, 0x8d, 0x57, 0x54, 0xb1, 0x4b,
+	0xdf, 0x17, 0x9b, 0x48, 0x79, 0xec, 0x6e, 0xc3, 0xa4, 0x42, 0x43, 0xe8, 0x28, 0xb1, 0x66, 0x11,
+	0xb6, 0x5c, 0x6b, 0xda, 0xf7, 0xf2, 0x80, 0xfc, 0x6c, 0xc1, 0x59, 0x03, 0x4c, 0xc6, 0x22, 0x92,
+	0x0c, 0x4d, 0x00, 0x7c, 0x11, 0xa9, 0x84, 0xfa, 0xea, 0xd3, 0x95, 0x06, 0x1b, 0x2f, 0xe8, 0x1c,
+	0x4e, 0x45, 0xcc, 0x12, 0xaa, 0xb8, 0x88, 0xae, 0x79, 0xc8, 0x15, 0x6e, 0xb9, 0xd6, 0xd4, 0xf6,
+	0xf6, 0x5e, 0xd1, 0x4b, 0x18, 0x84, 0xf4, 0xc7, 0x65, 0x10, 0x88, 0x2d, 0x5d, 0x06, 0x6c, 0x4e,
+	0x03, 0x1a, 0xf9, 0x0c, 0xdb, 0x59, 0x71, 0x5d, 0x0a, 0x5d, 0xc0, 0x78, 0x97, 0x63, 0xc1, 0x92,
+	0xcf, 0x22, 0x52, 0xb7, 0xb8, 0x9d, 0x81, 0x1a, 0xb2, 0x08, 0xc3, 0xf1, 0x52, 0xb3, 0x77, 0xb2,
+	0xc2, 0x22, 0xcc, 0x32, 0x81, 0xf0, 0xd7, 0x6c, 0x85, 0xbb, 0xae, 0x35, 0xed, 0x79, 0x45, 0x48,
+	0x46, 0x30, 0xb8, 0xe6, 0x52, 0xe9, 0xe1, 0xa5, 0x36, 0x8d, 0xbc, 0x85, 0xe1, 0xee, 0xb3, 0x36,
+	0xc5, 0x85, 0xff, 0x2a, 0x0b, 0x24, 0xb6, 0x5c, 0x7b, 0xda, 0xf7, 0xcc, 0x27, 0xf2, 0x0e, 0x1e,
+	0x7d, 0x64, 0x05, 0x50, 0x4f, 0x54, 0xd0, 0x3e, 0xe4, 0x29, 0xb9, 0x00, 0xa7, 0x0e, 0xac, 0xc5,
+	0x8d, 0xf9, 0xac, 0x9d, 0xf9, 0xc8, 0x0c, 0x86, 0x57, 0x2c, 0x16, 0x92, 0xab, 0xfc, 0x3f, 0x2d,
+	0xf4, 0xc6, 0xd0, 0xa5, 0x61, 0xca, 0xa5, 0x01, 0x3a, 0x22, 0xbf, 0x2c, 0x18, 0xed, 0x01, 0xb4,
+	0xc6, 0x29, 0xb4, 0xf8, 0x4a, 0x77, 0xd6, 0xe2, 0xab, 0x54, 0x33, 0xc7, 0x48, 0xdc, 0x72, 0xed,
+	0x54, 0x53, 0x87, 0xc8, 0x81, 0x9e, 0x2f, 0xc2, 0x90, 0xa5, 0x29, 0x3b, 0xf3, 0xa1, 0x8c, 0xf7,
+	0x6d, 0x6a, 0xdf, 0xb3, 0x29, 0xdd, 0xca, 0x80, 0x47, 0x6b, 0x89, 0x3b, 0x59, 0x2e, 0x0f, 0xc8,
+	0x73, 0x18, 0x14, 0x6d, 0x05, 0x42, 0x96, 0x63, 0xec, 0x35, 0x45, 0xde, 0x57, 0xe3, 0xe6, 0x65,
+	0x0d, 0xcd, 0x8f, 0xa1, 0x2b, 0x15, 0x55, 0x1b, 0x99, 0xad, 0x66, 0xdf, 0xd3, 0x91, 0x29, 0x73,
+	0xcb, 0xfc, 0x75, 0x93, 0xcc, 0x1f, 0xab, 0xd2, 0xc9, 0xeb, 0xfe, 0x4d, 0xc7, 0x34, 0xcf, 0x6e,
+	0x36, 0xaf, 0x7d, 0xd8, 0xbc, 0xce, 0x01, 0xf3, 0xba, 0x86, 0x79, 0x29, 0x67, 0xae, 0xcb, 0x24,
+	0x3e, 0x76, 0xed, 0x69, 0xcf, 0x2b, 0xe3, 0x57, 0xbf, 0xdb, 0xd0, 0xfe, 0xc2, 0xb7, 0x1c, 0x7d,
+	0x87, 0x51, 0xed, 0xd9, 0xa3, 0xf3, 0x59, 0xf1, 0x45, 0x99, 0x1d, 0xfa, 0x9c, 0x38, 0x2f, 0x1e,
+	0xac, 0xcb, 0x4d, 0x22, 0x47, 0xe8, 0x06, 0xfe, 0x37, 0x8f, 0x08, 0x9d, 0x55, 0xd0, 0x9a, 0x9b,
+	0x73, 0x26, 0x4d, 0xe9, 0x92, 0x90, 0x02, 0xba, 0x7f, 0x1e, 0xe8, 0x69, 0x85, 0x6b, 0xbc, 0x3c,
+	0xe7, 0xd9, 0xe1, 0xa2, 0x52, 0xc2, 0x83, 0x93, 0x9d, 0xc3, 0x40, 0x46, 0x57, 0x75, 0x27, 0xe6,
+	0x3c, 0x69, 0xcc, 0x9b, 0x3e, 0x98, 0xeb, 0x6a, 0xfa, 0x50, 0xb3, 0xed, 0xce, 0xa4, 0x29, 0x5d,
+	0x47, 0x98, 0xee, 0x65, 0x1d, 0xa1, 0xb1, 0xd7, 0x75, 0x84, 0xe6, 0x3a, 0x93, 0xa3, 0xf9, 0xc9,
+	0xbc, 0x9f, 0x6e, 0xc7, 0x22, 0x2d, 0x5b, 0x58, 0xcb, 0x6e, 0x56, 0xff, 0xfa, 0x6f, 0x00, 0x00,
+	0x00, 0xff, 0xff, 0x69, 0x49, 0xf7, 0x1f, 0x71, 0x06, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -602,7 +694,8 @@ type QiwiClient interface {
 	CreateOrUpdateAccount(ctx context.Context, in *CreateOrUpdateAccountRequest, opts ...grpc.CallOption) (*CreateOrUpdateAccountResponse, error)
 	ListAccounts(ctx context.Context, in *ListAccountsRequest, opts ...grpc.CallOption) (*ListAccountsResponse, error)
 	GetAccountBalances(ctx context.Context, in *GetAccountBalancesRequest, opts ...grpc.CallOption) (*GetAccountBalancesResponse, error)
-	Deposit(ctx context.Context, in *DepositRequest, opts ...grpc.CallOption) (*DepositResponse, error)
+	DepositCreate(ctx context.Context, in *DepositCreateRequest, opts ...grpc.CallOption) (*DepositCreateResponse, error)
+	DepositClose(ctx context.Context, in *DepositCloseRequest, opts ...grpc.CallOption) (*DepositCloseResponse, error)
 	DepositCheck(ctx context.Context, in *DepositCheckRequest, opts ...grpc.CallOption) (*DepositCheckResponse, error)
 }
 
@@ -641,9 +734,18 @@ func (c *qiwiClient) GetAccountBalances(ctx context.Context, in *GetAccountBalan
 	return out, nil
 }
 
-func (c *qiwiClient) Deposit(ctx context.Context, in *DepositRequest, opts ...grpc.CallOption) (*DepositResponse, error) {
-	out := new(DepositResponse)
-	err := c.cc.Invoke(ctx, "/protobuf.Qiwi/Deposit", in, out, opts...)
+func (c *qiwiClient) DepositCreate(ctx context.Context, in *DepositCreateRequest, opts ...grpc.CallOption) (*DepositCreateResponse, error) {
+	out := new(DepositCreateResponse)
+	err := c.cc.Invoke(ctx, "/protobuf.Qiwi/DepositCreate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *qiwiClient) DepositClose(ctx context.Context, in *DepositCloseRequest, opts ...grpc.CallOption) (*DepositCloseResponse, error) {
+	out := new(DepositCloseResponse)
+	err := c.cc.Invoke(ctx, "/protobuf.Qiwi/DepositClose", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -664,7 +766,8 @@ type QiwiServer interface {
 	CreateOrUpdateAccount(context.Context, *CreateOrUpdateAccountRequest) (*CreateOrUpdateAccountResponse, error)
 	ListAccounts(context.Context, *ListAccountsRequest) (*ListAccountsResponse, error)
 	GetAccountBalances(context.Context, *GetAccountBalancesRequest) (*GetAccountBalancesResponse, error)
-	Deposit(context.Context, *DepositRequest) (*DepositResponse, error)
+	DepositCreate(context.Context, *DepositCreateRequest) (*DepositCreateResponse, error)
+	DepositClose(context.Context, *DepositCloseRequest) (*DepositCloseResponse, error)
 	DepositCheck(context.Context, *DepositCheckRequest) (*DepositCheckResponse, error)
 }
 
@@ -726,20 +829,38 @@ func _Qiwi_GetAccountBalances_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Qiwi_Deposit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DepositRequest)
+func _Qiwi_DepositCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DepositCreateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QiwiServer).Deposit(ctx, in)
+		return srv.(QiwiServer).DepositCreate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/protobuf.Qiwi/Deposit",
+		FullMethod: "/protobuf.Qiwi/DepositCreate",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QiwiServer).Deposit(ctx, req.(*DepositRequest))
+		return srv.(QiwiServer).DepositCreate(ctx, req.(*DepositCreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Qiwi_DepositClose_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DepositCloseRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QiwiServer).DepositClose(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protobuf.Qiwi/DepositClose",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QiwiServer).DepositClose(ctx, req.(*DepositCloseRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -779,8 +900,12 @@ var _Qiwi_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Qiwi_GetAccountBalances_Handler,
 		},
 		{
-			MethodName: "Deposit",
-			Handler:    _Qiwi_Deposit_Handler,
+			MethodName: "DepositCreate",
+			Handler:    _Qiwi_DepositCreate_Handler,
+		},
+		{
+			MethodName: "DepositClose",
+			Handler:    _Qiwi_DepositClose_Handler,
 		},
 		{
 			MethodName: "DepositCheck",

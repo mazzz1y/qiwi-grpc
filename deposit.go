@@ -48,6 +48,21 @@ func (d Deposit) Create() (Deposit, error) {
 	return d, nil
 }
 
+func (d Deposit) Close() (Deposit, error) {
+	const closeStatus = "closed"
+	err := depositCollection.FindOne(context.TODO(), bson.M{"_id": d.ID}).Decode(&d)
+	if err != nil {
+		return d, err
+	}
+	d.Status = closeStatus
+	_, err = depositCollection.ReplaceOne(context.TODO(), bson.M{"_id": d.ID}, &d)
+	if err != nil {
+		return d, status.Errorf(codes.Internal, "failed to update deposit status")
+	}
+
+	return d, nil
+}
+
 func (d Deposit) Check() (Deposit, error) {
 	err := depositCollection.FindOne(context.TODO(), bson.M{"_id": d.ID}).Decode(&d)
 	if len(d.Transactions) == 0 {
@@ -118,7 +133,7 @@ func (d Deposit) updateTransactionsStatus() (Deposit, error) {
 	d.Status = "accepted"
 	_, err := depositCollection.ReplaceOne(context.TODO(), bson.M{"_id": d.ID}, &d)
 	if err != nil {
-		return d, status.Errorf(codes.Internal, "failed to update transaction status")
+		return d, status.Errorf(codes.Internal, "failed to update deposit status")
 	}
 	return d, nil
 }

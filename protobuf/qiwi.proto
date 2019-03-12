@@ -13,12 +13,13 @@ service Qiwi {
     }
     rpc GetAccountBalances (GetAccountBalancesRequest) returns (GetAccountBalancesResponse) {
     }
-    rpc Deposit (DepositRequest) returns (DepositResponse) {
+    rpc DepositCreate (DepositCreateRequest) returns (DepositCreateResponse) {
+    }
+    rpc DepositClose (DepositCloseRequest) returns (DepositCloseResponse) {
     }
     rpc DepositCheck (DepositCheckRequest) returns (DepositCheckResponse) {
     }
     //  rpc Withdrawal (WithdrawalRequest) returns (WithdrawalResponse) {}
-
 }
 
 /**
@@ -60,15 +61,26 @@ message GetAccountBalancesResponse {
 /**
  * Create deposit entity and return requisites for payment
 */
-message DepositRequest {
+message DepositCreateRequest {
     int64 amount = 1; // Amount(RUB)
 }
-message DepositResponse {
+message DepositCreateResponse {
     string id = 1; // Deposit ID
     repeated int64 amounts = 2; // Array of amounts
     repeated string comments = 3; // Array of comments
     repeated string contractIDs = 4; // Array of contractIDs
     repeated string links = 5; // Array of user-friendly links
+}
+
+/**
+ * Close deposit
+*/
+message DepositCloseRequest {
+    string id = 1; // Deposit ID 
+}
+message DepositCloseResponse {
+    string id = 1; // Deposit ID
+    string status = 2; // Deposit status (paid, pending, closed)
 }
 
 /**
@@ -79,7 +91,7 @@ message DepositCheckRequest {
 }
 message DepositCheckResponse {
     string id = 1; // Deposit ID 
-    string status = 2; // Status of deposit, may be paid, pending, closed
+    string status = 2; // Status of deposit(paid, pending, closed) 
     repeated int64 amounts = 3; // Amount per transaction
     repeated string comments = 4; // Comment per transaction
     repeated string contractIDs = 5; // ContractID per transaction, Format: 79999999999

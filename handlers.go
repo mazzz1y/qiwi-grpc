@@ -40,7 +40,7 @@ func (s *Server) GetAccountBalances(ctx context.Context, in *pb.GetAccountBalanc
 		nil
 }
 
-func (s *Server) Deposit(ctx context.Context, in *pb.DepositRequest) (*pb.DepositResponse, error) {
+func (s *Server) DepositCreate(ctx context.Context, in *pb.DepositCreateRequest) (*pb.DepositCreateResponse, error) {
 	deposit, err := Deposit{Amount: in.Amount}.Create()
 
 	var amounts []int64
@@ -57,12 +57,28 @@ func (s *Server) Deposit(ctx context.Context, in *pb.DepositRequest) (*pb.Deposi
 	if err != nil {
 		return nil, err
 	}
-	return &pb.DepositResponse{
+	return &pb.DepositCreateResponse{
 			Id:          deposit.ID.Hex(),
 			ContractIDs: contractIDs,
 			Amounts:     amounts,
 			Links:       links,
 			Comments:    comments},
+		nil
+}
+
+func (s *Server) DepositClose(ctx context.Context, in *pb.DepositCloseRequest) (*pb.DepositCloseResponse, error) {
+	objID, err := primitive.ObjectIDFromHex(in.Id)
+	if err != nil {
+		return nil, err //todo readable
+	}
+	deposit, err := Deposit{ID: objID}.Close()
+	if err != nil {
+		return nil, err
+	}
+	return &pb.DepositCloseResponse{
+			Id:     deposit.ID.Hex(),
+			Status: deposit.Status,
+		},
 		nil
 }
 
