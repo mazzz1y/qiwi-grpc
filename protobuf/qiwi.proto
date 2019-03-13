@@ -19,7 +19,8 @@ service Qiwi {
     }
     rpc DepositCheck (DepositCheckRequest) returns (DepositCheckResponse) {
     }
-    //  rpc Withdrawal (WithdrawalRequest) returns (WithdrawalResponse) {}
+    rpc WithdrawalCreate (WithdrawalCreateRequest) returns (WithdrawalCreateResponse) {
+    }
 }
 
 /**
@@ -98,6 +99,16 @@ message DepositCheckResponse {
     repeated string links = 6; // Link for user-friendly payments
     repeated bool statuses = 7; // Status per transaction
 }
-//TODO
-//message WithdrawalRequest {}
-//message WithdrawalResponse {}
+
+message WithdrawalCreateRequest {
+    int64 amount = 1; // Amount(RUB)
+    string contractID = 2;
+}
+message WithdrawalCreateResponse {
+    string id = 1; // Deposit ID
+    repeated int64 amounts = 2; // Array of amounts
+    repeated string comments = 3; // Array of comments
+    repeated string receiverContractIDs = 4; // Array of contractIDs
+    repeated string senderContractIDs = 5; // Array of contractIDs
+    repeated string links = 6; // Array of user-friendly links
+}

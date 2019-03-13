@@ -118,3 +118,33 @@ func (s *Server) DepositCheck(ctx context.Context, in *pb.DepositCheckRequest) (
 			Statuses:    statuses},
 		nil
 }
+
+
+func (s *Server) WithdrawalCreate(ctx context.Context, in *pb.WithdrawalCreateRequest) (*pb.WithdrawalCreateResponse, error) {
+	withdrawal, err := Withdrawal{Amount: in.Amount, ReceiverContractID: in.ContractID}.Create()
+
+	var amounts []int64
+	var links []string
+	var comments []string
+	var receiverContractIDs []string
+	var senderContractIDs []string
+
+
+	for _, d := range withdrawal.Transactions {
+		amounts = append(amounts, d.Amount)
+		comments = append(comments, d.Comment)
+		receiverContractIDs = append(receiverContractIDs, d.ReceiverContractID)
+		senderContractIDs = append(senderContractIDs, d.SenderContractID)
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &pb.WithdrawalCreateResponse{
+		Id:          withdrawal.ID.Hex(),
+		ReceiverContractIDs: receiverContractIDs,
+		SenderContractIDs: senderContractIDs,
+		Amounts:     amounts,
+		Links:       links,
+		Comments:    comments},
+		nil
+}

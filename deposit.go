@@ -83,7 +83,7 @@ func (d Deposit) generateTransactions() ([]DepositTransaction, error) {
 	var depositTransactions []DepositTransaction
 
 	if getAvailableDepositSum() < amount {
-		return depositTransactions, status.Errorf(codes.OutOfRange, "not enough deposit sum")
+		return depositTransactions, status.Errorf(codes.OutOfRange, "not enough limits for deposit")
 	}
 	for _, acc := range accounts {
 		comment := strconv.FormatInt(rand.Int63(), 10)
