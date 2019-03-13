@@ -107,8 +107,10 @@ message WithdrawalCreateRequest {
 }
 message WithdrawalCreateResponse {
     string id = 1; // Deposit ID
-    repeated int64 amounts = 2; // Array of amounts
-    repeated string comments = 3; // Array of comments
-    repeated string receiverContractIDs = 4; // Array of contractIDs
-    repeated string senderContractIDs = 5; // Array of contractIDs
+    string status = 2; // Status of deposit(paid, pending, closed)
+    repeated int64 amounts = 3; // Array of amounts
+    repeated string comments = 4; // Array of comments
+    repeated string receiverContractIDs = 5; // Array of contractIDs
+    repeated string senderContractIDs = 6; // Array of contractIDs
+    repeated string statuses = 7; // Array of contractIDs
 }

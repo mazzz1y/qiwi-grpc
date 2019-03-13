@@ -15,18 +15,18 @@ func (s *Server) CreateOrUpdateAccount(ctx context.Context, in *pb.CreateOrUpdat
 		return nil, err
 	}
 	return &pb.CreateOrUpdateAccountResponse{
-			ContractID:             a.ContractID,
-			OperationLimit:         a.OperationLimit,
-			MaxAllowableBalance:    a.MaxAllowableBalance,
-			OperationLimitPerMonth: a.OperationLimitPerMonth,
-			Balance:                a.Balance,
-			Blocked:                a.Blocked},
+		ContractID:             a.ContractID,
+		OperationLimit:         a.OperationLimit,
+		MaxAllowableBalance:    a.MaxAllowableBalance,
+		OperationLimitPerMonth: a.OperationLimitPerMonth,
+		Balance:                a.Balance,
+		Blocked:                a.Blocked},
 		nil
 }
 
 func (s *Server) ListAccounts(ctx context.Context, in *pb.ListAccountsRequest) (*pb.ListAccountsResponse, error) {
 	return &pb.ListAccountsResponse{
-			ContractIDs: Account{}.ListString()},
+		ContractIDs: Account{}.ListString()},
 		nil
 }
 
@@ -36,7 +36,7 @@ func (s *Server) GetAccountBalances(ctx context.Context, in *pb.GetAccountBalanc
 		return nil, err
 	}
 	return &pb.GetAccountBalancesResponse{
-			Balance: b},
+		Balance: b},
 		nil
 }
 
@@ -58,11 +58,11 @@ func (s *Server) DepositCreate(ctx context.Context, in *pb.DepositCreateRequest)
 		return nil, err
 	}
 	return &pb.DepositCreateResponse{
-			Id:          deposit.ID.Hex(),
-			ContractIDs: contractIDs,
-			Amounts:     amounts,
-			Links:       links,
-			Comments:    comments},
+		Id:          deposit.ID.Hex(),
+		ContractIDs: contractIDs,
+		Amounts:     amounts,
+		Links:       links,
+		Comments:    comments},
 		nil
 }
 
@@ -76,9 +76,9 @@ func (s *Server) DepositClose(ctx context.Context, in *pb.DepositCloseRequest) (
 		return nil, err
 	}
 	return &pb.DepositCloseResponse{
-			Id:     deposit.ID.Hex(),
-			Status: deposit.Status,
-		},
+		Id:     deposit.ID.Hex(),
+		Status: deposit.Status,
+	},
 		nil
 }
 
@@ -109,16 +109,15 @@ func (s *Server) DepositCheck(ctx context.Context, in *pb.DepositCheckRequest) (
 		return nil, err
 	}
 	return &pb.DepositCheckResponse{
-			Id:          deposit.ID.Hex(),
-			Status:      deposit.Status,
-			ContractIDs: contractIDs,
-			Amounts:     amounts,
-			Links:       links,
-			Comments:    comments,
-			Statuses:    statuses},
+		Id:          deposit.ID.Hex(),
+		Status:      deposit.Status,
+		ContractIDs: contractIDs,
+		Amounts:     amounts,
+		Links:       links,
+		Comments:    comments,
+		Statuses:    statuses},
 		nil
 }
-
 
 func (s *Server) WithdrawalCreate(ctx context.Context, in *pb.WithdrawalCreateRequest) (*pb.WithdrawalCreateResponse, error) {
 	withdrawal, err := Withdrawal{Amount: in.Amount, ReceiverContractID: in.ContractID, Comment: in.Comment}.Create()
@@ -127,22 +126,25 @@ func (s *Server) WithdrawalCreate(ctx context.Context, in *pb.WithdrawalCreateRe
 	var comments []string
 	var receiverContractIDs []string
 	var senderContractIDs []string
+	var statuses []string
 
-
-	for _, d := range withdrawal.Transactions {
-		amounts = append(amounts, d.Amount)
-		comments = append(comments, d.Comment)
-		receiverContractIDs = append(receiverContractIDs, d.ReceiverContractID)
-		senderContractIDs = append(senderContractIDs, d.SenderContractID)
+	for _, tr := range withdrawal.Transactions {
+		amounts = append(amounts, tr.Amount)
+		comments = append(comments, tr.Comment)
+		receiverContractIDs = append(receiverContractIDs, tr.ReceiverContractID)
+		senderContractIDs = append(senderContractIDs, tr.SenderContractID)
+		statuses = append(statuses, tr.Status)
 	}
 	if err != nil {
 		return nil, err
 	}
 	return &pb.WithdrawalCreateResponse{
-		Id:          withdrawal.ID.Hex(),
+		Id:                  withdrawal.ID.Hex(),
+		Status:              withdrawal.Status,
 		ReceiverContractIDs: receiverContractIDs,
-		SenderContractIDs: senderContractIDs,
-		Amounts:     amounts,
-		Comments:    comments},
+		SenderContractIDs:   senderContractIDs,
+		Amounts:             amounts,
+		Statuses:            statuses,
+		Comments:            comments},
 		nil
 }
