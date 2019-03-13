@@ -123,12 +123,12 @@ func (a Account) GetBalance() (int64, error) {
 }
 
 // Send money to a Qiwi Wallet, only RUB
-func (a Account) SendMoneyToQiwi(amount int64, receiverContractID string) (string, error) {
+func (a Account) SendMoneyToQiwi(amount int64, receiverContractID string, comment string) (string, error) {
 	c, err := a.client()
 	if status.Code(err) != 0 {
 		return "", err
 	}
-	payment, err := c.Cards.Payment(paymentMethod, float64(amount), receiverContractID)
+	payment, err := c.Cards.Payment(paymentMethod, float64(amount), receiverContractID, comment)
 
 	if payment.Transaction.State.Code != "Accepted" {
 		err := errors.New("transaction declined")

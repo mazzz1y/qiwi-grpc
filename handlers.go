@@ -121,10 +121,9 @@ func (s *Server) DepositCheck(ctx context.Context, in *pb.DepositCheckRequest) (
 
 
 func (s *Server) WithdrawalCreate(ctx context.Context, in *pb.WithdrawalCreateRequest) (*pb.WithdrawalCreateResponse, error) {
-	withdrawal, err := Withdrawal{Amount: in.Amount, ReceiverContractID: in.ContractID}.Create()
+	withdrawal, err := Withdrawal{Amount: in.Amount, ReceiverContractID: in.ContractID, Comment: in.Comment}.Create()
 
 	var amounts []int64
-	var links []string
 	var comments []string
 	var receiverContractIDs []string
 	var senderContractIDs []string
@@ -144,7 +143,6 @@ func (s *Server) WithdrawalCreate(ctx context.Context, in *pb.WithdrawalCreateRe
 		ReceiverContractIDs: receiverContractIDs,
 		SenderContractIDs: senderContractIDs,
 		Amounts:     amounts,
-		Links:       links,
 		Comments:    comments},
 		nil
 }

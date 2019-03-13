@@ -103,6 +103,7 @@ message DepositCheckResponse {
 message WithdrawalCreateRequest {
     int64 amount = 1; // Amount(RUB)
     string contractID = 2;
+    string comment = 3;
 }
 message WithdrawalCreateResponse {
     string id = 1; // Deposit ID
@@ -110,5 +111,4 @@ message WithdrawalCreateResponse {
     repeated string comments = 3; // Array of comments
     repeated string receiverContractIDs = 4; // Array of contractIDs
     repeated string senderContractIDs = 5; // Array of contractIDs
-    repeated string links = 6; // Array of user-friendly links
 }

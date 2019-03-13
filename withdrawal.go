@@ -16,6 +16,7 @@ type Withdrawal struct {
 	Transactions       []WithdrawalTransaction `bson:"transactions"`
 	ReceiverContractID string                  `bson:"receiverContractID"`
 	Status             string                  `bson:"status"`
+	Comment            string                  `bson:"comment"`
 }
 
 type WithdrawalTransaction struct {
@@ -37,7 +38,7 @@ func (w Withdrawal) Create() (Withdrawal, error) {
 	w.Transactions = trs
 	w.Status = "failed"
 
-	//todo
+	//todo to-lower
 	for _, tr := range trs {
 		log.Println(tr.Status)
 		if tr.Status != "Accepted" {
@@ -57,9 +58,9 @@ func (w Withdrawal) Create() (Withdrawal, error) {
 func (w Withdrawal) generateTransactions() ([]WithdrawalTransaction, error) {
 	accounts := Account{}.List()
 	withdrawSum := getBalanceSum()
+	defaultStatus := "pending"
 	amount := w.Amount
-	comment := "" //todo
-
+	comment := w.Comment
 	var withdrawalTransactions []WithdrawalTransaction
 
 	if amount > withdrawSum {
@@ -77,7 +78,7 @@ func (w Withdrawal) generateTransactions() ([]WithdrawalTransaction, error) {
 				Comment:            comment,
 				SenderContractID:   acc.ContractID,
 				ReceiverContractID: w.ReceiverContractID,
-				Status:             ""})
+				Status:             defaultStatus})
 			amount -= amount
 		} else if availSumForWithdraw <= amount {
 			withdrawalTransactions = append(withdrawalTransactions, WithdrawalTransaction{
@@ -86,32 +87,28 @@ func (w Withdrawal) generateTransactions() ([]WithdrawalTransaction, error) {
 				Comment:            comment,
 				SenderContractID:   acc.ContractID,
 				ReceiverContractID: w.ReceiverContractID,
-				Status:             ""})
+				Status:             defaultStatus})
 			amount -= availSumForWithdraw
 		}
 	}
 
-	for _, tr := range withdrawalTransactions {
+	for i, tr := range withdrawalTransactions {
 		trCode, err := tr.makeTransaction()
-		tr.Status = trCode
+		withdrawalTransactions[i].Status = trCode
 		if err != nil {
 			return withdrawalTransactions, err
 		}
-		withdrawalTransactions = append(withdrawalTransactions, tr)
 	}
 	return withdrawalTransactions, nil
 }
-
-
 
 //todo rename
 func (w WithdrawalTransaction) makeTransaction() (string, error) {
 	acc := Account{ContractID: w.SenderContractID}
 
-	trCode, err := acc.SendMoneyToQiwi(w.Amount, w.ReceiverContractID)
+	trCode, err := acc.SendMoneyToQiwi(w.Amount, w.ReceiverContractID, w.Comment)
 
 	if err != nil {
-		log.Println(err)
 		return trCode, status.Errorf(codes.Aborted, "withdraw error")
 	}
 
