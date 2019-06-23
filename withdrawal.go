@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"log"
 )
 
 var withdrawalCollection = DB.Collection("withdrawals")
@@ -40,7 +40,6 @@ func (w Withdrawal) Create() (Withdrawal, error) {
 
 	//todo to-lower
 	for _, tr := range trs {
-		log.Println(tr.Status)
 		if tr.Status != "Accepted" {
 			w.Status = tr.Status
 		} else {
@@ -111,7 +110,7 @@ func (w WithdrawalTransaction) makeTransaction() (string, error) {
 	if err != nil {
 		return trCode, status.Errorf(codes.Aborted, "withdraw error")
 	}
-
+	//todo to-lower
 	w.Status = trCode
 
 	return trCode, nil

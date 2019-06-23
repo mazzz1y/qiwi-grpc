@@ -141,7 +141,6 @@ func (a Account) SendMoneyToQiwi(amount int64, receiverContractID string, commen
 func (a Account) GetPaymentLink(amount int, comment string) string {
 	const amountFraction = 0
 	const paymentFormURL = "https://qiwi.com/payment/form/"
-	const currency = 643
 
 	v := url.Values{}
 	v.Set("extra['account']", a.ContractID)

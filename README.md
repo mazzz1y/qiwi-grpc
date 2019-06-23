@@ -1,4 +1,6 @@
-## Qiwi service
+## Qiwi gRPC service
+
+### Unmaintained
 
 ### Requirements
 
