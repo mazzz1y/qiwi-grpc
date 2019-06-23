@@ -1,7 +1,5 @@
 ## Qiwi gRPC service
-
-### Unmaintained
-
+*Unmaintained*
 ### Requirements
 
 * Golang 1.11+
